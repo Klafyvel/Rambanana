@@ -24,7 +24,7 @@
 class Personnage
 {
 public:
-	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, char sprites[]);
+	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, char sprites[], SDL_Renderer* render);
 	void affiche(SDL_Renderer* render);
 	void avance(int direction); // voir description m_state 
 
