@@ -16,7 +16,12 @@
 */
 
 #include <iostream>
+#include <string>
 #include <SDL2/SDL.h>
+
+#include "SDLFunc.h"
+#include "defines.h"
+#include "personnage.h"
 
 int main(int argc, char* argv[])
 {
@@ -26,13 +31,13 @@ int main(int argc, char* argv[])
 	}
 
 	SDL_Window *fen = SDL_CreateWindow("Rambanana !", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-	if (win == nullptr){
+	if (fen == nullptr){
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
 
-	SDL_DestroyWindow(win);
+	SDL_DestroyWindow(fen);
 	SDL_Quit();
 	return 0;
 }
