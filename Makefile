@@ -37,9 +37,11 @@ all: main.o personnage.o
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(SDL_LIB)
 	@echo "\033[31mMakefile: \033[32m \t> un exemple a été créé à partir du fichier à cet endroit : $(EXEC)\n\t\t> 'make mrproper' pour réinitialiser le répertoire. \033[0m \n"
 
-main.o: personnage.h
+main.o: src/personnage.h src/defines.h src/SDLFunc.h
+SDLFunc.o: src/SDLFunc.h
+personnage.o: src/personnage.h
 
-%.o: %.c
+%.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 # clean
