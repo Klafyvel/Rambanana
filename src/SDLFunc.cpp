@@ -21,6 +21,23 @@ SDL_Texture* loadTexture(const std::string &file, SDL_Renderer *ren){
 	return texture;
 }
 
+SDL_Texture* loadTextureAlpha(const std::string &file, SDL_Renderer *ren, int r, int g, int b)
+{
+	SDL_Texture *texture = nullptr;
+	SDL_Surface *loadedImage = SDL_LoadBMP(file.c_str());
+	if (loadedImage != nullptr){
+		SDL_SetColorKey(loadedImage, SDL_TRUE, SDL_MapRGB(loadedImage->format, r, g, b));
+		texture = SDL_CreateTextureFromSurface(ren, loadedImage);
+		SDL_FreeSurface(loadedImage);
+		if (texture == nullptr)
+			logSDLError(std::cout, "CreateTextureFromSurface");
+	}
+	else
+		logSDLError(std::cout, "LoadBMP");
+
+	return texture;
+
+}
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 	SDL_Rect dst;
 	dst.x = x;

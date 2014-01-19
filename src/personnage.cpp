@@ -9,7 +9,7 @@ Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::str
 	m_hitbox.h = hitboxHeight;
 	m_hitbox.w = hitboxWidth;
 
-	m_sprites = loadTexture(sprites, render);
+	m_sprites = loadTextureAlpha(sprites, render, 0, 38, 255);
 
 	m_state = 0;
 
