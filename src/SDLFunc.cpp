@@ -1,4 +1,7 @@
-#include "SDL_Func.h"
+#include "SDLFunc.h"
+#include <iostream>
+#include <SDL2/SDL.h>
+
 void logSDLError(std::ostream &os, const std::string &msg){
 	os << msg << " error: " << SDL_GetError() << std::endl;
 }
@@ -25,7 +28,11 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
 	SDL_RenderCopy(ren, tex, NULL, &dst);
 }
-void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip = nullptr)
+void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip)
+{
+	SDL_RenderCopy(ren, tex, clip, &dst);
+}
+void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip)
 {
 	SDL_Rect dst;
 	dst.x = x;

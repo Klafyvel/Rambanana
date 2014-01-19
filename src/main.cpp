@@ -18,6 +18,7 @@
 #include <iostream>
 #include <string>
 #include <SDL2/SDL.h>
+#include <string>
 
 #include "SDLFunc.h"
 #include "defines.h"
@@ -36,7 +37,36 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	SDL_Renderer *renderer = SDL_CreateRenderer(fen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (renderer == nullptr){
+		logSDLError(std::cout, "CreateRenderer");
+		return 1;
+	}
 
+	Personnage Rambanana(0, 0, 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
+
+	SDL_Event e;
+
+	bool quit = false;
+
+	while(!quit)
+	{
+		while(SDL_PollEvent(&e))
+		{
+			if(e.type == SDL_QUIT)
+				quit = true;
+			if(e.type == SDL_KEYDOWN)
+				quit = true;
+			if(e.type == SDL_MOUSEBUTTONDOWN)
+				quit = true;
+		}
+		SDL_RenderClear(renderer);
+		Rambanana.affiche(renderer);
+		SDL_RenderPresent(renderer);
+
+	}
+
+	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(fen);
 	SDL_Quit();
 	return 0;
