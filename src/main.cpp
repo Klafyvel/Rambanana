@@ -23,6 +23,7 @@
 #include "SDLFunc.h"
 #include "defines.h"
 #include "personnage.h"
+#include "World.h"
 
 int main(int argc, char* argv[])
 {
@@ -45,6 +46,8 @@ int main(int argc, char* argv[])
 
 	Personnage Rambanana(0, 0, 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
 
+	World world("../lvl/1.lvl", renderer);
+
 	SDL_Event e;
 
 	bool quit = false;
@@ -61,6 +64,7 @@ int main(int argc, char* argv[])
 				quit = true;
 		}
 		SDL_RenderClear(renderer);
+		world.affiche(renderer);
 		Rambanana.affiche(renderer);
 		SDL_RenderPresent(renderer);
 

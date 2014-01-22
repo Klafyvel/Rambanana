@@ -38,13 +38,6 @@ SDL_Texture* loadTextureAlpha(const std::string &file, SDL_Renderer *ren, int r,
 	return texture;
 
 }
-void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
-	SDL_Rect dst;
-	dst.x = x;
-	dst.y = y;
-	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
-	SDL_RenderCopy(ren, tex, NULL, &dst);
-}
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip)
 {
 	SDL_RenderCopy(ren, tex, clip, &dst);

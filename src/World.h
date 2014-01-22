@@ -18,24 +18,25 @@
 #define H_WORLD
 
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
 #include <SDL2/SDL.h>
 
-typedef struct Bloc Bloc;
-struct Bloc
-{
-	SDL_Texture image;
-	int type;
-};
 
 class World
 {
 public:
-	World(std::string file);
+	World(std::string file, SDL_Renderer* renderer);
 	bool isInAFullBlock(int x, int y); // Pour détecter les collisions
+	void affiche(SDL_Renderer* renderer);
+	~World();
 
 private:
-	Bloc m_blocs[];
-	SDL_Texture m_background;
+	std::vector <std::vector <int>> m_blocs;
+	SDL_Texture* m_background;
+	SDL_Texture* m_texBlocs;
 };
 
 #endif

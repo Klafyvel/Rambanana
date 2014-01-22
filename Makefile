@@ -30,7 +30,7 @@ endif
 
 
 #création de l'exécutable
-all: main.o personnage.o SDLFunc.o
+all: main.o personnage.o SDLFunc.o World.o
 	mkdir bin
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(SDL_LIB)
 	@echo "\033[31mMakefile: \033[32m \t> un exemple a été créé à partir du fichier à cet endroit : $(EXEC)\n\t\t> 'make mrproper' pour réinitialiser le répertoire. \033[0m \n"
@@ -40,9 +40,10 @@ else
 	cd $(EXEC_DIR) && ./$(NAME)
 endif
 
-main.o: src/personnage.h src/defines.h src/SDLFunc.h
+main.o: src/personnage.h src/defines.h src/SDLFunc.h World.o
 SDLFunc.o: src/SDLFunc.h
 personnage.o: src/personnage.h
+World.o: src/World.h src/SDLFunc.h
 
 %.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
