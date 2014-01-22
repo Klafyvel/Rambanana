@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	SDL_Window *fen = SDL_CreateWindow("Rambanana !", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	SDL_Window *fen = SDL_CreateWindow("Rambanana !", 0, 0, TAILLE_X, TAILLE_Y, SDL_WINDOW_SHOWN);
 	if (fen == nullptr){
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	Personnage Rambanana(0, 0, 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
+	Personnage Rambanana(26, 26, 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
 
 	World world("../lvl/1.lvl", renderer);
 

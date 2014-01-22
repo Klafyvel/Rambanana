@@ -56,3 +56,10 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *
 
 	renderTexture(tex, ren, dst, clip);
 }
+void initRect(SDL_Rect* rect)
+{
+	rect->x = 0;
+	rect->y = 0;
+	rect->w = 0;
+	rect->h = 0;
+}
