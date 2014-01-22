@@ -27,43 +27,59 @@ World::World(std::string file, SDL_Renderer* renderer)
 
 	for(int i=0; i<w; i++)
 	{
-		std::vector <int> v;
+		std::vector <SDL_Rect> v;
 		for(int j=0; j<h; j++)
 		{
-			v.push_back(0);
+			SDL_Rect rect;
+			initRect(&rect);
+			v.push_back(rect);
 		}
 		m_blocs.push_back(v);
 	}
-	
 
 	for(int i=0; i<w; i++)
 	{
 		for(int j=0; j<h; j++)
 		{
 			lvl.get(c);
+			int foo;				
 			switch(c)
 			{
+
 				case '0':
-					m_blocs[i][j] = 0;
+					foo = 0;
 					break;
 				case '1':
-					m_blocs[i][j] = 1;
+					foo = 1;
 					break;
 				case '2':
-					m_blocs[i][j] = 2;
+					foo = 2;
 					break;
 				case '3':
-					m_blocs[i][j] = 3;
+					foo = 3;
 					break;
 				case '4':
-					m_blocs[i][j] = 4;
+					foo = 4;
 					break;
 				case '5':
-					m_blocs[i][j] = 5;
+					foo = 5;
 					break;
 				default:
 					break;
 			}
+			if(c!='\n')
+			{
+				m_blocs[i][j].w = BLOC;
+				m_blocs[i][j].h = BLOC;
+
+				m_blocs[i][j].x = foo * BLOC;
+				m_blocs[i][j].y = 0;
+			}
+		}
+		
+		while(c!='\n')
+		{
+			lvl.get(c);	
 		}
 	}	
 	
@@ -84,16 +100,7 @@ void World::affiche(SDL_Renderer* renderer)
 	{
 		for(unsigned int j=0; j<m_blocs[i].size(); j++)
 		{
-			SDL_Rect coupe;
-			coupe.w = BLOC;
-			coupe.h = BLOC;
-
-			std::cout << m_blocs[i][j] << std::endl;
-
-			coupe.x = m_blocs[i][j];
-			coupe.y = 0;
-
-			renderTexture(m_texBlocs, renderer, i * BLOC, j * BLOC, &coupe);
+			renderTexture(m_texBlocs, renderer, j * BLOC, i * BLOC, &m_blocs[i][j]);
 		}
 	}
 }

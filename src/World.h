@@ -34,7 +34,7 @@ public:
 	~World();
 
 private:
-	std::vector <std::vector <int>> m_blocs;
+	std::vector <std::vector <SDL_Rect>> m_blocs;
 	SDL_Texture* m_background;
 	SDL_Texture* m_texBlocs;
 };
