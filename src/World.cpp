@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "SDLFunc.h"
+#include "defines.h"
 
 #include <SDL2/SDL.h>
 
@@ -24,10 +25,10 @@ World::World(std::string file, SDL_Renderer* renderer)
 	lvl >> background >> w >> h;
 
 
-	for(int i=0; i<=w; i++)
+	for(int i=0; i<w; i++)
 	{
 		std::vector <int> v;
-		for(int j=0; j<=h; j++)
+		for(int j=0; j<h; j++)
 		{
 			v.push_back(0);
 		}
@@ -67,7 +68,7 @@ World::World(std::string file, SDL_Renderer* renderer)
 	}	
 	
 	m_background = loadTexture(background, renderer);
-	m_texBlocs = loadTexture("../sprites/SpritesBloc.bmp", renderer);
+	m_texBlocs = loadTextureAlpha("../sprites/SpritesBloc.bmp", renderer, 0, 38, 255);
 	
 }
 World::~World()
@@ -78,4 +79,21 @@ World::~World()
 void World::affiche(SDL_Renderer* renderer)
 {
 	renderTexture(m_background, renderer, 0, 0);
+
+	for(unsigned int i=0; i<m_blocs.size(); i++)
+	{
+		for(unsigned int j=0; j<m_blocs[i].size(); j++)
+		{
+			SDL_Rect coupe;
+			coupe.w = BLOC;
+			coupe.h = BLOC;
+
+			std::cout << m_blocs[i][j] << std::endl;
+
+			coupe.x = m_blocs[i][j];
+			coupe.y = 0;
+
+			renderTexture(m_texBlocs, renderer, i * BLOC, j * BLOC, &coupe);
+		}
+	}
 }
