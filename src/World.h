@@ -23,7 +23,7 @@
 #include <vector>
 
 #include <SDL2/SDL.h>
-
+#include "personnage.h"
 
 class World
 {
@@ -31,9 +31,11 @@ public:
 	World(std::string file, SDL_Renderer* renderer);
 	bool isInAFullBlock(int x, int y); // Pour détecter les collisions
 	void affiche(SDL_Renderer* renderer);
+	void scroll(int mvX);// 0 = vers la gauche 1 = vers la droite
 	~World();
 
 private:
+ 	int m_debutAffichage;
 	std::vector <std::vector <SDL_Rect>> m_blocs;
 	SDL_Texture* m_background;
 	SDL_Texture* m_texBlocs;

@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	Personnage Rambanana(26, 26, 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
+	Personnage Rambanana(26, 26 * 18 - (int)(TAILLE_PERSO_Y * 2), 38, 26, "../sprites/SpritesRambanana.bmp", renderer);
 
 	World world("../lvl/1.lvl", renderer);
 
@@ -58,10 +58,22 @@ int main(int argc, char* argv[])
 		{
 			if(e.type == SDL_QUIT)
 				quit = true;
-			if(e.type == SDL_KEYDOWN)
-				quit = true;
 			if(e.type == SDL_MOUSEBUTTONDOWN)
 				quit = true;
+			if(e.type == SDL_KEYDOWN)
+			{
+				switch(e.key.keysym.sym)
+				{
+					case SDLK_LEFT:
+						world.scroll(0);
+						break;
+					case SDLK_RIGHT:
+						world.scroll(1);
+						break;
+					default:
+						break;
+				}
+			}
 		}
 		SDL_RenderClear(renderer);
 		world.affiche(renderer);

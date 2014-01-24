@@ -64,6 +64,9 @@ World::World(std::string file, SDL_Renderer* renderer)
 				case '5':
 					foo = 5;
 					break;
+				case '6':
+					foo = 6;
+					break;
 				default:
 					break;
 			}
@@ -85,7 +88,8 @@ World::World(std::string file, SDL_Renderer* renderer)
 	
 	m_background = loadTexture(background, renderer);
 	m_texBlocs = loadTextureAlpha("../sprites/SpritesBloc.bmp", renderer, 0, 38, 255);
-	
+
+	m_debutAffichage = 0;	
 }
 World::~World()
 {
@@ -94,13 +98,20 @@ World::~World()
 }
 void World::affiche(SDL_Renderer* renderer)
 {
-	renderTexture(m_background, renderer, 0, 0);
+	renderTexture(m_background, renderer, 0, 0, 520, 520);
 
 	for(unsigned int i=0; i<m_blocs.size(); i++)
 	{
 		for(unsigned int j=0; j<m_blocs[i].size(); j++)
 		{
-			renderTexture(m_texBlocs, renderer, j * BLOC, i * BLOC, &m_blocs[i][j]);
+			renderTexture(m_texBlocs, renderer, j * BLOC + m_debutAffichage, i * BLOC, &m_blocs[i][j]);
 		}
 	}
+}
+void World::scroll(int mvX)
+{
+	if(mvX)
+		m_debutAffichage += 5;
+	else
+		m_debutAffichage -= 5;
 }
