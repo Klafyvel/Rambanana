@@ -17,33 +17,43 @@ CXX = g++
 NAME = Rambanana
 EXEC_DIR = bin/
 EXEC = $(EXEC_DIR)$(NAME)
-DEBUG = yes
+EXEC_EDIT = $(EXEC_DIR)Editeur
+DEBUG = no
+RUNAPP = no
+
 SDL_LIB = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
 SDL_INCLUDE = -I/usr/local/include
-
 ifeq ($(DEBUG),yes)
 	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(SDL_INCLUDE)
 else
-	CXXFLAGS = -std=c++11 $(SDL_INCLUDE)
+  CXXFLAGS = -std=c++11 $(SDL_INCLUDE)
 endif
 
 
-
 #création de l'exécutable
-all: main.o personnage.o SDLFunc.o World.o
+all: game editor
+
+game: main.o personnage.o SDLFunc.o World.o
 	mkdir bin
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(SDL_LIB)
-	@echo "\033[31mMakefile: \033[32m \t> un exemple a été créé à partir du fichier à cet endroit : $(EXEC)\n\t\t> 'make mrproper' pour réinitialiser le répertoire. \033[0m \n"
+ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
 	cd $(EXEC_DIR) && valgrind --track-origins=yes ./$(NAME)
 else
 	cd $(EXEC_DIR) && ./$(NAME)
 endif
+endif
 
-main.o: src/personnage.h src/defines.h src/SDLFunc.h World.o
+editor: menu.o mapeditor.o World.o SDLFunc.o
+	$(CXX) $^ -o $(EXEC_EDIT) $(CXXFLAGS) $(SDL_LIB)
+	
+
+main.o: src/personnage.h src/defines.h src/SDLFunc.h src/World.h
 SDLFunc.o: src/SDLFunc.h
 personnage.o: src/personnage.h
 World.o: src/World.h src/SDLFunc.h
+menu.o: src/menu.h src/World.h
+mapeditor.o: src/mapeditor.h src/menu.h src/SDLFunc.h src/World.h src/defines.h
 
 %.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)

@@ -16,8 +16,8 @@ Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::str
 	m_rectAffichage.x = x - TAILLE_PERSO_X/2 + hitboxWidth/2;
 	m_rectAffichage.y = y - TAILLE_PERSO_Y/2 + hitboxHeight/2;
 
-	m_rectAffichage.w = TAILLE_PERSO_X;
-	m_rectAffichage.h = TAILLE_PERSO_Y;
+	m_rectAffichage.w = (int)(TAILLE_PERSO_X * 2);
+	m_rectAffichage.h = (int)(TAILLE_PERSO_Y * 2);
 
 	m_coupe.x = 0;
 	m_coupe.y = 0;

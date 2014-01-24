@@ -24,6 +24,7 @@ World::World(std::string file, SDL_Renderer* renderer)
 	int w, h;
 	lvl >> background >> w >> h;
 
+	lvl.get(c);
 
 	for(int i=0; i<w; i++)
 	{
