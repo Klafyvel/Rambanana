@@ -116,3 +116,7 @@ void World::scroll(int mvX)
 	else
 		m_debutAffichage -= 5;
 }
+int World::typeBlock(int x, int y)
+{
+	return m_blocs[(int)y/26][(int)x/26].x / BLOC;
+}

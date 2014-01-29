@@ -29,7 +29,7 @@ class World
 {
 public:
 	World(std::string file, SDL_Renderer* renderer);
-	bool isInAFullBlock(int x, int y); // Pour détecter les collisions
+	int typeBlock(int x, int y); // Pour détecter les collisions
 	void affiche(SDL_Renderer* renderer);
 	void scroll(int mvX);// 0 = vers la gauche 1 = vers la droite
 	~World();
