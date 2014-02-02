@@ -94,10 +94,10 @@ void load(lvl* world)
 
 	fic.get(c);
 
-	for(int i=0; i<world->h; i++)
+	for(int i=0; i<world->w; i++)
 	{
 		std::vector <int> v;
-		for(int j=0; j<world->w; j++)
+		for(int j=0; j<world->h; j++)
 		{
 			bool isEndl = false;
 			int foo;
@@ -202,10 +202,10 @@ void setSize(lvl* world)
 	std::cin >> world->w;
 	std::cout << "Indiquez la nouvelle hauteur (en blocs): ";
 	std::cin >> world->h;
-	for(int i=0; i<world->h; i++)
+	for(int i=0; i<world->w; i++)
 	{
 		std::vector <int> v;
-		for(int j=0; j<world->w; j++)
+		for(int j=0; j<world->h; j++)
 		{
 			v.push_back(0);
 		}
@@ -226,9 +226,9 @@ void write(lvl* world)
 	if((world->background == "")||(world->h == 0)||(world->w == 0))
 		return;
 	fic << world->background << std::endl << world->w << " " << world->h << std::endl;
-	for(int i=0; i<world->h; i++)
+	for(int i=0; i<world->w; i++)
 	{
-		for(int j=0; j<world->w; j++)
+		for(int j=0; j<world->h; j++)
 		{
 			fic << world->blocs[i][j];
 		}
