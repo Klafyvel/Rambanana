@@ -16,10 +16,11 @@
 CXX = g++
 NAME = Rambanana
 EXEC_DIR = bin/
+EXEC_DIR_EXIST :=`ls | grep bin | wc -l`
 EXEC = $(EXEC_DIR)$(NAME)
 EXEC_EDIT = $(EXEC_DIR)Editeur
-DEBUG = no
-RUNAPP = no
+DEBUG = yes
+RUNAPP = yes
 
 SDL_LIB = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
 SDL_INCLUDE = -I/usr/local/include
@@ -31,10 +32,15 @@ endif
 
 
 #création de l'exécutable
-all: game editor
+all: exec_dir 
+	make game 
+	make editor
+	make clean
+
+exec_dir: mrproper
+	mkdir bin
 
 game: main.o personnage.o SDLFunc.o World.o
-	mkdir bin
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(SDL_LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
@@ -46,6 +52,14 @@ endif
 
 editor: menu.o mapeditor.o World.o SDLFunc.o
 	$(CXX) $^ -o $(EXEC_EDIT) $(CXXFLAGS) $(SDL_LIB)
+ifeq ($(RUNAPP),yes)
+ifeq ($(DEBUG),yes)
+	cd $(EXEC_DIR) && valgrind --track-origins=yes ./Editeur
+else
+	cd $(EXEC_DIR) && ./Editeur
+endif
+endif
+
 	
 
 main.o: src/personnage.h src/defines.h src/SDLFunc.h src/World.h
