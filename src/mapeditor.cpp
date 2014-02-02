@@ -184,6 +184,12 @@ void edit(lvl* world)
 					map.scroll(0);
 				if(e.key.keysym.sym == SDLK_LEFT)
 					map.scroll(1);
+				if(e.key.keysym.sym == SDLK_RETURN)
+				{
+					map.getMap(&world->blocs);
+					write(world);
+					quit = true;
+				}
 			}
 		}
 		SDL_RenderClear(renderer);
