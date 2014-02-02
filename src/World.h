@@ -34,6 +34,7 @@ public:
 	void scroll(int mvX);// 0 = vers la gauche 1 = vers la droite
 	void upgradeBloc(int x, int y);
 	void eraseBloc(int x, int y);
+	void getMap(std::vector <std::vector <int>> *receiver); 
 	~World();
  
 private:

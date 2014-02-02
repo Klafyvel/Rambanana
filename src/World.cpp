@@ -135,3 +135,16 @@ void World::eraseBloc(int x, int y)
 {
 	m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x = 0;
 }
+void World::getMap(std::vector <std::vector <int>> *receiver)
+{
+	receiver->resize(m_blocs.size());
+	for(int i=0; i<receiver->size(); i++)
+		(*receiver)[i].resize(m_blocs[i].size());
+	for(int i=0; i<m_blocs.size(); i++)
+	{
+		for(int j=0; j<m_blocs[i].size(); j++)
+		{
+			(*receiver)[i][j] = m_blocs[i][j].x / BLOC;
+		}
+	}
+}
