@@ -26,7 +26,7 @@
 #include "mapeditor.h"
 
 #define MAX_ITEM 10
-#define MAX_LABEL_LONG 20
+#define MAX_LABEL_LONG 30
 
 typedef void (*callback)(lvl *world);
 

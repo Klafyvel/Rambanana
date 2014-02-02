@@ -11,15 +11,15 @@
 
 #include "menu.h"
 
-typedef struct lvl lvl
+typedef struct lvl lvl;
 struct lvl
 {
+	std::string chemin;
 	std::string background;
 	int h;
 	int w;
 	std::vector <std::vector <int>> blocs;
 };
-
 
 void create(lvl* world);
 void load(lvl* world);

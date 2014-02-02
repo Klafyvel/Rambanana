@@ -116,7 +116,22 @@ void World::scroll(int mvX)
 	else
 		m_debutAffichage -= 5;
 }
-int World::typeBlock(int x, int y)
+int World::typeBloc(int x, int y)
 {
-	return m_blocs[(int)y/26][(int)x/26].x / BLOC;
+	return (m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x) / BLOC;
+}
+void World::upgradeBloc(int x, int y)
+{
+	if(this->typeBloc(x, y) == 6)
+	{
+		m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x = 0;
+	}
+	else
+	{
+		m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x += 26;
+	}
+}
+void World::eraseBloc(int x, int y)
+{
+	m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x = 0;
 }

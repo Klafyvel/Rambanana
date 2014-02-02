@@ -29,11 +29,13 @@ class World
 {
 public:
 	World(std::string file, SDL_Renderer* renderer);
-	int typeBlock(int x, int y); // Pour détecter les collisions
+	int typeBloc(int x, int y); // Pour détecter les collisions
 	void affiche(SDL_Renderer* renderer);
 	void scroll(int mvX);// 0 = vers la gauche 1 = vers la droite
+	void upgradeBloc(int x, int y);
+	void eraseBloc(int x, int y);
 	~World();
-
+ 
 private:
  	int m_debutAffichage;
 	std::vector <std::vector <SDL_Rect>> m_blocs;
