@@ -4,20 +4,23 @@ Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::str
 {
 	m_pointsDeVie = 100;
 
-	m_hitbox.x = x;
-	m_hitbox.y = y;
+	m_hitbox.x = x + (TAILLE_PERSO_AFFICHE_X - hitboxWidth)/2;
+	m_hitbox.y = y + (TAILLE_PERSO_AFFICHE_Y - hitboxHeight)/2;
 	m_hitbox.h = hitboxHeight;
 	m_hitbox.w = hitboxWidth;
 
 	m_sprites = loadTextureAlpha(sprites, render, 0, 38, 255);
 
-	m_state = 0;
 
-	m_rectAffichage.x = x - TAILLE_PERSO_X/2 + hitboxWidth/2;
-	m_rectAffichage.y = y - TAILLE_PERSO_Y/2 + hitboxHeight/2;
+	m_state.saute=false;
+	m_state.cour=false;
+	m_state.vaAGauche=false;
+	
+    m_rectAffichage.x = x;
+	m_rectAffichage.y = y;
 
-	m_rectAffichage.w = (int)(TAILLE_PERSO_X * 2);
-	m_rectAffichage.h = (int)(TAILLE_PERSO_Y * 2);
+	m_rectAffichage.w = TAILLE_PERSO_AFFICHE_X;
+	m_rectAffichage.h = TAILLE_PERSO_AFFICHE_Y;
 
 	m_coupe.x = 0;
 	m_coupe.y = 0;
@@ -28,19 +31,74 @@ Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::str
 
 	m_timerAffichage = SDL_GetTicks();
 
-}
+    m_tempsPerso = 200;
 
+}
+ 
 void Personnage::affiche(SDL_Renderer* render)
 {
-	m_coupe.y = m_state * TAILLE_PERSO_Y;
-	m_coupe.x = m_valAffichage * TAILLE_PERSO_X;
+    if(m_state.saute)
+	    m_coupe.y = RANG_SAUT * TAILLE_PERSO_Y;
+    else if(m_state.cour)
+        m_coupe.y = RANG_COUR * TAILLE_PERSO_Y;
+    else
+        m_coupe.y = RANG_IMMOBILE * TAILLE_PERSO_Y;
 
-	if(SDL_GetTicks() - m_timerAffichage >= TEMPS_PERSO)
+	if(SDL_GetTicks() - m_timerAffichage >= m_tempsPerso)
 	{
 		m_timerAffichage = SDL_GetTicks();
 		m_valAffichage ++;
-		if(m_valAffichage > 2)
+		if(m_valAffichage > IMAGES_PAR_MOUVEMENT - 1)
 			m_valAffichage = 0;
 	}
+    if(m_state.vaAGauche)
+        m_coupe.y += TAILLE_PERSO_Y;
+	m_coupe.x = m_valAffichage * TAILLE_PERSO_X;
+
+    std::cout << "m_rectAffichage" << m_rectAffichage.x << " " << m_rectAffichage.y << std::endl;
+
 	renderTexture(m_sprites, render, m_rectAffichage, &m_coupe); 
+}
+void Personnage::move(int direction)
+{
+
+    if(direction & IMMOBILE)
+    {
+        m_state.cour=false;
+        m_state.saute=false;
+    }
+    if(direction & DROITE)
+        m_state.vaAGauche=false;
+    if(direction & GAUCHE)
+        m_state.vaAGauche=true;
+    if(direction & COUR)
+    {
+        m_state.cour=true;
+        m_state.saute=false;
+    }
+    if(direction & SAUTE)
+    {
+        m_state.cour=false;
+        m_state.saute=true;
+    }
+    if(direction & MONTE)
+        m_hitbox.y -= PAS_DEPLACEMENT_Y;
+    if(direction & DESCEND)
+        m_hitbox.y += PAS_DEPLACEMENT_Y;
+    if(m_state.cour || m_state.saute)
+    {
+        m_tempsPerso=100;
+        if(m_state.cour && m_state.vaAGauche)
+            m_hitbox.x -= PAS_DEPLACEMENT_X;
+        if(m_state.cour && !m_state.vaAGauche)
+            m_hitbox.x += PAS_DEPLACEMENT_X;
+        if(m_state.saute)
+            m_hitbox.y += PAS_DEPLACEMENT_Y;
+
+    }
+    else
+        m_tempsPerso=200;
+
+        m_rectAffichage.x = m_hitbox.x - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.w)/2);
+        m_rectAffichage.y = m_hitbox.y - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.h)/2);  
 }

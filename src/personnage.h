@@ -33,29 +33,25 @@ class Personnage
 public:
 	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render);
 	void affiche(SDL_Renderer* render);
-	void avance(int direction); // voir description m_state 
+	void move(int direction); // voir description m_state 
 
 private:
 	int m_pointsDeVie;
 	
-	SDL_Texture* m_sprites;
-	
-	int m_state; /* Varie entre 0 et 7:
-	
-	saute | cour | vaAGauche || state
-		0		|		0	 |		0			 || 0
-		0		|		0	 |		1			 || 1
-		0		|		1	 |		0			 || 2
-		0		|		1	 |		1			 || 3
-		1		|		0	 |		0			 || 4
-		1		|		0	 |		1			 || 5
-*/
-	
+	SDL_Texture* m_sprites; 
+	struct s_state{
+            bool saute;
+            bool cour;
+            bool vaAGauche;
+    }m_state;	
+ 	
 	SDL_Rect m_hitbox;
 
 	SDL_Rect m_rectAffichage;
 
 	SDL_Rect m_coupe;
+
+    int m_tempsPerso;
 
 	int m_valAffichage; // Numero du sprite à afficher (0~2)
 	Uint32 m_timerAffichage;

@@ -145,7 +145,6 @@ void load(lvl* world)
 }
 void edit(lvl* world)
 {
-	write(world);
 
 	if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		return;
@@ -208,14 +207,33 @@ void setSize(lvl* world)
 	std::cin >> world->w;
 	std::cout << "Indiquez la nouvelle hauteur (en blocs): ";
 	std::cin >> world->h;
-	for(int i=0; i<world->w; i++)
+	int oldW = world->blocs.size();
+	if(oldW < world->w)
 	{
-		std::vector <int> v;
-		for(int j=0; j<world->h; j++)
+		for(int i=0; i<oldW; i++)
 		{
-			v.push_back(0);
+			int oldH = world->blocs[i].size();
+			for(int j=oldH; j<world->h; j++)
+			{
+				world->blocs[i].push_back(0);
+			}
 		}
-		world->blocs.push_back(v);
+		for(int i=oldW; i<world->w; i++)
+		{
+			std::vector <int> row;
+			for(int j=0; j<world->h; j++)
+			{
+				row.push_back(0);
+			}
+			world->blocs.push_back(row);
+		}
+	}
+	if(oldW > world->w)
+	{
+		for(int i=oldW-1; i>=world->w; i--)
+		{
+			world->blocs.pop_back();
+		}
 	}
 }
 void setBack(lvl* world)
