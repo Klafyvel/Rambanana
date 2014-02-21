@@ -3,11 +3,14 @@
 
 #define BLOC 26
 
-#define TAILLE_X BLOC * 20
-#define TAILLE_Y BLOC * 20
+#define TAILLE_X BLOC * 30
+#define TAILLE_Y BLOC * 25
 
 #define TAILLE_PERSO_X 26
 #define TAILLE_PERSO_Y 38
+
+#define TAILLE_HITBOX_PERSO_X 20
+#define TAILLE_HITBOX_PERSO_Y 30
 
 #define TAILLE_PERSO_AFFICHE_X 2 * TAILLE_PERSO_X
 #define TAILLE_PERSO_AFFICHE_Y 2 * TAILLE_PERSO_Y
@@ -25,10 +28,12 @@
 #define GAUCHE 4
 #define COUR 8
 #define SAUTE 16
-#define MONTE 32
-#define DESCEND 64
+#define HAUT 32
+#define BAS 64
 
 #define PAS_DEPLACEMENT_X 5
-#define PAS_DEPLACEMENT_Y 2
+#define PAS_DEPLACEMENT_Y 10
+
+#define ENERGIE_SAUT 10000
 
 #endif

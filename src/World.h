@@ -25,6 +25,7 @@
 #include <SDL2/SDL.h>
 #include "personnage.h"
 
+class Personnage;
 class World
 {
 public:

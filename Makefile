@@ -64,8 +64,8 @@ endif
 
 main.o: src/personnage.h src/defines.h src/SDLFunc.h src/World.h
 SDLFunc.o: src/SDLFunc.h
-personnage.o: src/personnage.h
-World.o: src/World.h src/SDLFunc.h
+World.o: src/World.h src/SDLFunc.h src/personnage.h
+personnage.o: src/personnage.h src/World.h src/SDLFunc.h
 menu.o: src/menu.h src/World.h
 mapeditor.o: src/mapeditor.h src/menu.h src/SDLFunc.h src/World.h src/defines.h
 

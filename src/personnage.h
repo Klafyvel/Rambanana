@@ -24,26 +24,27 @@
 #include <ctime>
 
 #include "defines.h"
-
+#include "World.h" 
 #include "SDLFunc.h"
-
+class World;
 // Contient la classe générique pour créer un personnage 
 class Personnage
 {
 public:
-	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render);
+	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render, World* world);
 	void affiche(SDL_Renderer* render);
-	void move(int direction); // voir description m_state 
-
+	void move(int direction); // voir description m_state
+    int collision(int direction);
+    void gravite(int direction);
 private:
 	int m_pointsDeVie;
 	
 	SDL_Texture* m_sprites; 
 	struct s_state{
-            bool saute;
-            bool cour;
-            bool vaAGauche;
-    }m_state;	
+        bool saute;
+        bool cour;
+        bool vaAGauche;
+    }m_state;
  	
 	SDL_Rect m_hitbox;
 
@@ -55,6 +56,10 @@ private:
 
 	int m_valAffichage; // Numero du sprite à afficher (0~2)
 	Uint32 m_timerAffichage;
+
+    World* m_world;
+
+    int m_energieSaut;
 };
 
 #endif

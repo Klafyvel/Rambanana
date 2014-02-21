@@ -44,11 +44,12 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	Personnage Rambanana(26, 26 * 18 - (int)(TAILLE_PERSO_Y * 2), 30, 25, "../sprites/SpritesRambanana.bmp", renderer);
 
 	World world("../lvl/1.lvl", renderer);
-
-	SDL_Event e;
+ 
+	Personnage Rambanana(26, 26 * 18 - (int)(TAILLE_PERSO_Y * 2), 30, 25, "../sprites/SpritesRambanana.bmp", renderer, &world); 
+	
+    SDL_Event e;
 
 	bool quit = false;
 
@@ -73,19 +74,31 @@ int main(int argc, char* argv[])
 						Rambanana.move(COUR | DROITE);
 						break;
                     case SDLK_UP:
-                        Rambanana.move(MONTE);
+                        Rambanana.move(HAUT);
                         break;
                     case SDLK_DOWN:
-                        Rambanana.move(DESCEND);
+                        Rambanana.move(BAS);
+                        break;
+                    case SDLK_q:
+                        world.scroll(GAUCHE);
+                        break;
+                    case SDLK_d:
+                        world.scroll(DROITE);
+                        break;
+                    case SDLK_SPACE:
+                        Rambanana.move(SAUTE);
                         break;
 					default:
 						break;
 				}
 			}
             else
+            {
                 Rambanana.move(IMMOBILE);
+            }
 
 		}
+        Rambanana.gravite(BAS);
 		SDL_RenderClear(renderer);
 		world.affiche(renderer);
 		Rambanana.affiche(renderer);

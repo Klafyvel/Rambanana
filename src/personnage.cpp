@@ -1,6 +1,6 @@
 #include "personnage.h"
 
-Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render)
+Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render, World* world)
 {
 	m_pointsDeVie = 100;
 
@@ -33,6 +33,10 @@ Personnage::Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::str
 
     m_tempsPerso = 200;
 
+    m_world = world;
+
+    m_energieSaut = ENERGIE_SAUT;
+
 }
  
 void Personnage::affiche(SDL_Renderer* render)
@@ -55,7 +59,6 @@ void Personnage::affiche(SDL_Renderer* render)
         m_coupe.y += TAILLE_PERSO_Y;
 	m_coupe.x = m_valAffichage * TAILLE_PERSO_X;
 
-    std::cout << "m_rectAffichage" << m_rectAffichage.x << " " << m_rectAffichage.y << std::endl;
 
 	renderTexture(m_sprites, render, m_rectAffichage, &m_coupe); 
 }
@@ -81,24 +84,47 @@ void Personnage::move(int direction)
         m_state.cour=false;
         m_state.saute=true;
     }
-    if(direction & MONTE)
+    if((direction & HAUT)&&(m_energieSaut > 0))
+    {
         m_hitbox.y -= PAS_DEPLACEMENT_Y;
-    if(direction & DESCEND)
-        m_hitbox.y += PAS_DEPLACEMENT_Y;
+        m_energieSaut --;
+    }
+    if(direction & BAS)
+            m_hitbox.y += PAS_DEPLACEMENT_Y;
+
     if(m_state.cour || m_state.saute)
     {
         m_tempsPerso=100;
-        if(m_state.cour && m_state.vaAGauche)
+        if((m_state.cour && m_state.vaAGauche) && !Personnage::collision(GAUCHE))
             m_hitbox.x -= PAS_DEPLACEMENT_X;
-        if(m_state.cour && !m_state.vaAGauche)
+        if((m_state.cour && !m_state.vaAGauche) && !Personnage::collision(DROITE))
             m_hitbox.x += PAS_DEPLACEMENT_X;
-        if(m_state.saute)
-            m_hitbox.y += PAS_DEPLACEMENT_Y;
-
+        if(m_state.saute && m_state.vaAGauche)
+            Personnage::move(HAUT | GAUCHE | COUR);
+        if(m_state.saute && !m_state.vaAGauche)
+            Personnage::move(HAUT | DROITE | COUR);
     }
     else
         m_tempsPerso=200;
 
-        m_rectAffichage.x = m_hitbox.x - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.w)/2);
-        m_rectAffichage.y = m_hitbox.y - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.h)/2);  
+    m_rectAffichage.x = m_hitbox.x - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.w)/2);
+    m_rectAffichage.y = m_hitbox.y - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.h)/2);  
 }
+int Personnage::collision(int direction)
+{
+    if((direction & GAUCHE) && ((m_world->typeBloc(m_rectAffichage.x - PAS_DEPLACEMENT_X, m_rectAffichage.y))||m_world->typeBloc(m_rectAffichage.x - PAS_DEPLACEMENT_X, m_rectAffichage.y + m_rectAffichage.h - 1)))
+        return 1;
+    if((direction & DROITE) && m_world->typeBloc(m_rectAffichage.x + m_rectAffichage.w + PAS_DEPLACEMENT_X, m_rectAffichage.y))
+        return 1;
+    if((direction & HAUT) && m_world->typeBloc(m_rectAffichage.x, m_rectAffichage.y - PAS_DEPLACEMENT_Y))
+        return 1;
+    if((direction & BAS) && m_world->typeBloc(m_rectAffichage.x, m_rectAffichage.y + m_rectAffichage.h +PAS_DEPLACEMENT_Y - 1))
+        return 1;
+    return 0;
+}
+void Personnage::gravite(int direction)
+{
+    if(!Personnage::collision(direction))
+        Personnage::move(direction);
+}
+

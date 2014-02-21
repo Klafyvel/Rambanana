@@ -26,10 +26,10 @@ World::World(std::string file, SDL_Renderer* renderer)
 
 	lvl.get(c);
 
-	for(int i=0; i<w; i++)
+	for(int i=0; i<h; i++)
 	{
 		std::vector <SDL_Rect> v;
-		for(int j=0; j<h; j++)
+		for(int j=0; j<w; j++)
 		{
 			SDL_Rect rect;
 			initRect(&rect);
@@ -38,9 +38,9 @@ World::World(std::string file, SDL_Renderer* renderer)
 		m_blocs.push_back(v);
 	}
 
-	for(int i=0; i<w; i++)
+	for(int i=0; i<h; i++)
 	{
-		for(int j=0; j<h; j++)
+		for(int j=0; j<w; j++)
 		{
 			lvl.get(c);
 			int foo;				
@@ -99,7 +99,7 @@ World::~World()
 }
 void World::affiche(SDL_Renderer* renderer)
 {
-	renderTexture(m_background, renderer, 0, 0, 520, 520);
+	renderTexture(m_background, renderer, 0, 0, TAILLE_X, TAILLE_Y);
 
 	for(unsigned int i=0; i<m_blocs.size(); i++)
 	{
@@ -111,9 +111,9 @@ void World::affiche(SDL_Renderer* renderer)
 }
 void World::scroll(int mvX)
 {
-	if(mvX)
+	if((mvX & GAUCHE)&&(m_debutAffichage <=-5))
 		m_debutAffichage += 5;
-	else
+	if(mvX & DROITE)
 		m_debutAffichage -= 5;
 }
 int World::typeBloc(int x, int y)
