@@ -11,7 +11,7 @@
 
 .PHONY: clean, mrproper
 .SUFFIXES:
-
+ 
 #variables
 CXX = g++
 NAME = Rambanana
@@ -22,12 +22,12 @@ EXEC_EDIT = $(EXEC_DIR)Editeur
 DEBUG = yes
 RUNAPP = yes
 
-SDL_LIB = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
-SDL_INCLUDE = -I/usr/local/include
+LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system
+INCLUDE = -I $(HOME)/SFML-2.1/include
 ifeq ($(DEBUG),yes)
-	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(SDL_INCLUDE)
+	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(INCLUDE)
 else
-  CXXFLAGS = -std=c++11 $(SDL_INCLUDE)
+  CXXFLAGS = -std=c++11 $(INCLUDE)
 endif
 
 
@@ -40,8 +40,8 @@ all: exec_dir
 exec_dir: mrproper
 	mkdir bin
 
-game: main.o personnage.o SDLFunc.o World.o
-	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(SDL_LIB)
+game: main.o personnage.o World.o
+	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
 	cd $(EXEC_DIR) && valgrind --track-origins=yes ./$(NAME)
@@ -51,7 +51,7 @@ endif
 endif
 
 editor: menu.o mapeditor.o World.o SDLFunc.o
-	$(CXX) $^ -o $(EXEC_EDIT) $(CXXFLAGS) $(SDL_LIB)
+	$(CXX) $^ -o $(EXEC_EDIT) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
 	cd $(EXEC_DIR) && valgrind --track-origins=yes ./Editeur
@@ -62,12 +62,11 @@ endif
 
 	
 
-main.o: src/personnage.h src/defines.h src/SDLFunc.h src/World.h
-SDLFunc.o: src/SDLFunc.h
-World.o: src/World.h src/SDLFunc.h src/personnage.h
-personnage.o: src/personnage.h src/World.h src/SDLFunc.h
+main.o: src/personnage.h src/defines.h src/World.h
+World.o: src/World.h src/personnage.h
+personnage.o: src/personnage.h src/World.h
 menu.o: src/menu.h src/World.h
-mapeditor.o: src/mapeditor.h src/menu.h src/SDLFunc.h src/World.h src/defines.h
+mapeditor.o: src/mapeditor.h src/menu.h src/World.h src/defines.h
 
 %.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)

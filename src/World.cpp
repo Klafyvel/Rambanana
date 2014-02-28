@@ -5,14 +5,46 @@
 #include <string>
 #include <vector>
 
-#include "SDLFunc.h"
+#include "personnage.h"
 #include "defines.h"
 
-#include <SDL2/SDL.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
-World::World(std::string file, SDL_Renderer* renderer)
+
+Bloc::Bloc()
 {
-	std::ifstream lvl(file, std::ios::in);
+    m_rect = sf::IntRect(0,0,0,0);
+    m_sprite = sf::Sprite();
+}
+void Bloc::setRect(sf::IntRect rect)
+{
+    m_rect = rect;
+}
+void Bloc::setSprite(sf::Sprite sprite)
+{
+    std::cout << "Définition de sprite" << std::endl;
+    m_sprite = sprite;
+}
+sf::IntRect &Bloc::getRect()
+{
+    return m_rect;
+}
+sf::Sprite &Bloc::getSprite()
+{
+    return m_sprite;
+}
+World::World(const World &world) 
+{
+    m_debutAffichage = world.m_debutAffichage;
+    m_blocs = world.m_blocs;
+    m_background = world.m_background;
+    m_texBlocs = world.m_texBlocs;
+}
+    
+World::World(std::string file)
+{
+	std::ifstream lvl(file.c_str(), std::ios::in);
 	if(!lvl)
 	{
 		std::cout << "Impossible de charger le fichier niveau" << std::endl;
@@ -24,16 +56,31 @@ World::World(std::string file, SDL_Renderer* renderer)
 	int w, h;
 	lvl >> background >> w >> h;
 
+    sf::Image imageBack;
+    sf::Image imageBloc;
+	if(!imageBack.loadFromFile(background))
+    {
+        std::cerr << "Image non chargée. (" << background << ")"<<std::endl;
+        return;
+    }
+    if(!imageBloc.loadFromFile("../sprites/SpritesBloc.bmp"))
+    {
+        std::cerr << "Image non chargée. (" << "../sprites/SpritesBloc.bmp" << ")" <<std::endl;
+        return;
+    }
+    imageBloc.createMaskFromColor(sf::Color(0,38,255));
+    m_background.loadFromImage(imageBack);
+    m_texBlocs.loadFromImage(imageBloc);
+
 	lvl.get(c);
 
 	for(int i=0; i<h; i++)
 	{
-		std::vector <SDL_Rect> v;
+		std::vector <Bloc> v;
 		for(int j=0; j<w; j++)
 		{
-			SDL_Rect rect;
-			initRect(&rect);
-			v.push_back(rect);
+			Bloc bloc;
+			v.push_back(bloc);
 		}
 		m_blocs.push_back(v);
 	}
@@ -43,7 +90,7 @@ World::World(std::string file, SDL_Renderer* renderer)
 		for(int j=0; j<w; j++)
 		{
 			lvl.get(c);
-			int foo;				
+			int foo;
 			switch(c)
 			{
 
@@ -73,53 +120,44 @@ World::World(std::string file, SDL_Renderer* renderer)
 			}
 			if(c!='\n')
 			{
-				m_blocs[i][j].w = BLOC;
-				m_blocs[i][j].h = BLOC;
-
-				m_blocs[i][j].x = foo * BLOC;
-				m_blocs[i][j].y = 0;
+                sf::IntRect rect(foo * BLOC, 0, BLOC, BLOC);
+				m_blocs[i][j].setRect(rect);
 			}
 		}
 		
 		while(c!='\n')
 		{
-			lvl.get(c);	
+			lvl.get(c);
 		}
 	}	
 	
-	m_background = loadTexture(background, renderer);
-	m_texBlocs = loadTextureAlpha("../sprites/SpritesBloc.bmp", renderer, 0, 38, 255);
+    World::updateBloc();
 
 	m_debutAffichage = 0;	
 }
-World::~World()
+void World::draw(sf::RenderWindow &window)
 {
-	SDL_DestroyTexture(m_background);
-	SDL_DestroyTexture(m_texBlocs);
-}
-void World::affiche(SDL_Renderer* renderer)
-{
-	renderTexture(m_background, renderer, 0, 0, TAILLE_X, TAILLE_Y);
-
-	for(unsigned int i=0; i<m_blocs.size(); i++)
+	for(int i=0; i<m_blocs.size(); i++)
 	{
-		for(unsigned int j=0; j<m_blocs[i].size(); j++)
+		for(int j=0; j<m_blocs[i].size(); j++)
 		{
-			renderTexture(m_texBlocs, renderer, j * BLOC + m_debutAffichage, i * BLOC, &m_blocs[i][j]);
+			window.draw(m_blocs[i][j].getSprite());
 		}
 	}
 }
+/*
 void World::scroll(int mvX)
 {
 	if((mvX & GAUCHE)&&(m_debutAffichage <=-5))
 		m_debutAffichage += 5;
 	if(mvX & DROITE)
 		m_debutAffichage -= 5;
-}
-int World::typeBloc(int x, int y)
+}*/
+int World::typeBloc(sf::Vector2f pos)
 {
-	return (m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x) / BLOC;
+	return (m_blocs[pos.y/BLOC][(pos.x-m_debutAffichage)/BLOC].getRect().left) / BLOC;
 }
+/*
 void World::upgradeBloc(int x, int y)
 {
 	if(this->typeBloc(x, y) == 6)
@@ -147,4 +185,19 @@ void World::getMap(std::vector <std::vector <int>> *receiver)
 			(*receiver)[i][j] = m_blocs[i][j].x / BLOC;
 		}
 	}
+}*/
+void World::updateBloc()
+{
+    for(int i=0; i<m_blocs.size(); i++)
+    {
+        for(int j=0; j<m_blocs[i].size(); j++)
+        {
+            sf::Sprite sprite;
+            sprite.setPosition(sf::Vector2f(j*BLOC,i*BLOC));
+            sprite.setTexture(m_texBlocs);
+            sprite.setTextureRect(m_blocs[i][j].getRect());
+            m_blocs[i][j].setSprite(sprite);
+        }
+    }
 }
+

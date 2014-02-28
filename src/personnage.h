@@ -19,48 +19,47 @@
 #define H_PERSONNAGE
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <string>
 #include <ctime>
-
+#include "World.h"
 #include "defines.h"
-#include "World.h" 
-#include "SDLFunc.h"
 class World;
-// Contient la classe générique pour créer un personnage 
+
 class Personnage
 {
 public:
-	Personnage(int x, int y, int hitboxHeight, int hitboxWidth, std::string sprites, SDL_Renderer *render, World* world);
-	void affiche(SDL_Renderer* render);
-	void move(int direction); // voir description m_state
+	Personnage(sf::Vector2f position, int hitboxHeight, int hitboxWidth, std::string sprites, World &world);
+	void draw(sf::RenderWindow &window);
+	void move(int direction);
     int collision(int direction);
-    void gravite(int direction);
+    void gravity(int direction);
+    void corrigeCollision();
 private:
-	int m_pointsDeVie;
+	int m_life;
 	
-	SDL_Texture* m_sprites; 
+	sf::Texture m_texSprites; 
+    sf::Sprite m_sprite;
 	struct s_state{
-        bool saute;
-        bool cour;
-        bool vaAGauche;
+        bool jump;
+        bool run;
+        bool left;
     }m_state;
  	
-	SDL_Rect m_hitbox;
+	sf::IntRect m_hitbox;
 
-	SDL_Rect m_rectAffichage;
-
-	SDL_Rect m_coupe;
+	sf::IntRect m_coupe;
 
     int m_tempsPerso;
 
 	int m_valAffichage; // Numero du sprite à afficher (0~2)
-	Uint32 m_timerAffichage;
+	sf::Clock m_timerAffichage;
 
-    World* m_world;
+    World *m_world;
 
     int m_energieSaut;
 };
 
 #endif
-
+ 

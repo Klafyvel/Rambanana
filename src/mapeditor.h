@@ -1,4 +1,5 @@
-#ifndef H_MAPEDITOR
+//Doit être modifié pour SFML [28/02/2014]
+/*#ifndef H_MAPEDITOR
 #define H_MAPEDITOR
 
 #include <iostream>
@@ -29,4 +30,4 @@ void setBack(lvl* world);
 
 void write(lvl* world);
 
-#endif
+#endif*/

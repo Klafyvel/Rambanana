@@ -1,3 +1,5 @@
+//Doit être modifié pour SFML [28/02/2014]
+/*
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -72,12 +74,7 @@ void create(lvl* world)
 	(*world).w=0;
 }
 void load(lvl* world)
-{/*
-	for(int i=0; i<world->h; i++)
-	{
-		world->blocs.pop_back();
-	}*/
-
+{
 	std::string chemin;
 	std::cout << "Chemin actuel :" << world->chemin << std::endl;
 	std::cout << "Indiquez le chemin (relatif) du fichier: ";
@@ -259,4 +256,4 @@ void write(lvl* world)
 		fic << std::endl;
 	}
 	fic.close();
-}
+}*/

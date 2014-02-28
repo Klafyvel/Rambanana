@@ -22,27 +22,43 @@
 #include <string>
 #include <vector>
 
-#include <SDL2/SDL.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+
 #include "personnage.h"
+
+class Bloc
+{
+public:
+    Bloc();
+    void setRect(sf::IntRect rect);
+    void setSprite(sf::Sprite sprite);
+    sf::IntRect &getRect();
+    sf::Sprite &getSprite();
+private:
+    sf::IntRect m_rect;
+    sf::Sprite m_sprite;
+};
 
 class Personnage;
 class World
 {
 public:
-	World(std::string file, SDL_Renderer* renderer);
-	int typeBloc(int x, int y); // Pour détecter les collisions
-	void affiche(SDL_Renderer* renderer);
-	void scroll(int mvX);// 0 = vers la gauche 1 = vers la droite
-	void upgradeBloc(int x, int y);
-	void eraseBloc(int x, int y);
-	void getMap(std::vector <std::vector <int>> *receiver); 
-	~World();
+	World(std::string file = "");
+    World(const World &world);
+	int typeBloc(sf::Vector2f pos);
+    void draw(sf::RenderWindow &window);
+	void scroll(int direction);
+	void upgradeBloc(sf::Vector2f pos);
+	void eraseBloc(sf::Vector2f pos);
+	void getMap(std::vector <std::vector <int> > *receiver);
+    sf::Vector2f getCaracterPos();
+    void updateBloc();
  
 private:
  	int m_debutAffichage;
-	std::vector <std::vector <SDL_Rect>> m_blocs;
-	SDL_Texture* m_background;
-	SDL_Texture* m_texBlocs;
+	std::vector <std::vector <Bloc> > m_blocs;
+	sf::Texture  m_background;
+	sf::Texture  m_texBlocs;
 };
-
 #endif

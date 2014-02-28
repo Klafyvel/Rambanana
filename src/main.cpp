@@ -17,97 +17,90 @@
 
 #include <iostream>
 #include <string>
-#include <SDL2/SDL.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <string>
 
-#include "SDLFunc.h"
+#include "World.h"
 #include "defines.h"
 #include "personnage.h"
-#include "World.h"
 
 int main(int argc, char* argv[])
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
-		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		return 1;
-	}
+    //Window
+    sf::RenderWindow window(sf::VideoMode(TAILLE_X, TAILLE_Y), "Rambanana !");
 
-	SDL_Window *fen = SDL_CreateWindow("Rambanana !", 0, 0, TAILLE_X, TAILLE_Y, SDL_WINDOW_SHOWN);
-	if (fen == nullptr){
-		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-		return 1;
-	}
+    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
 
-	SDL_Renderer *renderer = SDL_CreateRenderer(fen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (renderer == nullptr){
-		logSDLError(std::cout, "CreateRenderer");
-		return 1;
-	}
+    window.setView(view);
 
+	World world("../lvl/1.lvl");
 
-	World world("../lvl/1.lvl", renderer);
- 
-	Personnage Rambanana(26, 26 * 18 - (int)(TAILLE_PERSO_Y * 2), 30, 25, "../sprites/SpritesRambanana.bmp", renderer, &world); 
+    Personnage Rambanana(world.getCaracterPos(), 30, 25, "../sprites/SpritesRambanana.bmp", world); 
 	
-    SDL_Event e;
 
-	bool quit = false;
-
-	while(!quit)
+	while(window.isOpen())
 	{
-		while(SDL_PollEvent(&e))
-		{
-			if(e.type == SDL_QUIT)
-				quit = true;
-			if(e.type == SDL_MOUSEBUTTONDOWN)
-			{
-				std::cout << world.typeBloc(e.button.x, e.button.y) << std::endl;
-			}
-			if(e.type == SDL_KEYDOWN)
-			{
-				switch(e.key.keysym.sym)
-				{
-					case SDLK_LEFT:
-						Rambanana.move(COUR | GAUCHE);
-						break;
-					case SDLK_RIGHT:
-						Rambanana.move(COUR | DROITE);
-						break;
-                    case SDLK_UP:
-                        Rambanana.move(HAUT);
-                        break;
-                    case SDLK_DOWN:
-                        Rambanana.move(BAS);
-                        break;
-                    case SDLK_q:
-                        world.scroll(GAUCHE);
-                        break;
-                    case SDLK_d:
-                        world.scroll(DROITE);
-                        break;
-                    case SDLK_SPACE:
-                        Rambanana.move(SAUTE);
-                        break;
-					default:
-						break;
-				}
-			}
-            else
+        bool moving = false;
+        sf::Event event;
+        while(window.pollEvent(event))
+        {
+            switch(event.type)
             {
-                Rambanana.move(IMMOBILE);
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::KeyPressed:
+                    switch(event.key.code)
+                    {
+                        case sf::Keyboard::A:
+                            view.zoom(0.5);
+                            window.setView(view);
+                            break;
+                        case sf::Keyboard::Z:
+                            view.zoom(2);
+                            window.setView(view);
+                            break;
+                        case sf::Keyboard::Left:
+                            view.move(sf::Vector2f(-5,0));
+                            window.setView(view);
+                        
+                            moving = true;
+						    Rambanana.move(COUR | GAUCHE);
+                            break;
+                        case sf::Keyboard::Right:
+                            view.move(sf::Vector2f(5,0));
+                            window.setView(view);
+                        
+                            moving = true;
+						    Rambanana.move(COUR | DROITE);
+                            break;/*
+                        case sf::Keyboard::Left:
+                            moving = true;
+                            Rambanana.move(SAUTE);
+                            break;*/
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+        if(!moving)
+        {
+            Rambanana.move(IMMOBILE);
+        }
+        Rambanana.gravity(BAS);
 
-		}
-        Rambanana.gravite(BAS);
-		SDL_RenderClear(renderer);
-		world.affiche(renderer);
-		Rambanana.affiche(renderer);
-		SDL_RenderPresent(renderer);
+        window.clear(sf::Color::Black);
+        world.draw(window);
+		Rambanana.draw(window);
+
+        window.display();
+
 
 	}
 
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(fen);
-	SDL_Quit();
 	return 0;
 }
