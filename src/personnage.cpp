@@ -1,10 +1,10 @@
 #include "personnage.h"
 #include "World.h"
 
-Personnage::Personnage(sf::Vector2f position, int hitboxHeight, int hitboxWidth, std::string sprites, World &world)
+Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight, std::string sprites, World *world)
 {
 	
-    *m_world = world; 
+    m_world = world; 
     m_life = 100;
 
 	m_hitbox.left = position.x + (TAILLE_PERSO_AFFICHE_X - hitboxWidth)/2;
@@ -20,6 +20,8 @@ Personnage::Personnage(sf::Vector2f position, int hitboxHeight, int hitboxWidth,
     m_texSprites.loadFromImage(imageTexSprites);
 
     m_sprite.setTexture(m_texSprites);
+	m_sprite.setScale(AGRANDISSEMENT_PERSO, AGRANDISSEMENT_PERSO);
+	m_sprite.setOrigin(sf::Vector2f(0,0));
 
 	m_state.jump=false;
 	m_state.run=false;
@@ -94,7 +96,7 @@ void Personnage::move(int direction)
 
     if(m_state.run || m_state.jump)
     {
-        m_tempsPerso=100;
+        m_tempsPerso=TEMPS_PERSO_RUN;
         if((m_state.run && m_state.left) && !Personnage::collision(GAUCHE))
             m_hitbox.left -= PAS_DEPLACEMENT_X;
         if((m_state.run && !m_state.left) && !Personnage::collision(DROITE))
@@ -105,21 +107,31 @@ void Personnage::move(int direction)
             Personnage::move(HAUT | DROITE | COUR);
     }
     else
-        m_tempsPerso=200;
+        m_tempsPerso=TEMPS_PERSO;
 
-    m_sprite.setPosition(sf::Vector2f(m_hitbox.left - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.width)/2), m_hitbox.top - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.height)/2)));  
+    m_sprite.setPosition(sf::Vector2f(m_hitbox.left - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.width)/2), m_hitbox.top - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.height)/2)));
+/*
+	std::cout << "Personnage: " << std::endl;
+	std::cout << "\t m_sprite.left = " << m_sprite.getPosition().x << std::endl;
+	std::cout << "\t m_sprite.top = " << m_sprite.getPosition().y << std::endl;
+	std::cout << "\t m_hitbox.left = " << m_hitbox.left << std::endl;
+	std::cout << "\t m_hitbox.top = " << m_hitbox.top << std::endl;
+*/
 }
 int Personnage::collision(int direction)
 {
-    if((direction & GAUCHE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left - PAS_DEPLACEMENT_X, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left - PAS_DEPLACEMENT_X, m_hitbox.top + m_hitbox.height - 1))))
-        return 1;
-    if((direction & DROITE) && m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width + PAS_DEPLACEMENT_X, m_hitbox.top)))
-        return 1;
-    if((direction & HAUT) && m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top - PAS_DEPLACEMENT_Y)))
-        return 1;
-    if((direction & BAS) && m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height +PAS_DEPLACEMENT_Y - 1)))
-        return 1;
-    return 0;
+	bool collision = false;
+    if((direction & GAUCHE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height -1))))
+		collision = true;
+    if((direction & DROITE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - 1))))
+		collision = true;
+    if((direction & HAUT) && m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))
+		collision = true;
+    if((direction & BAS) && (m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y - 1)) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y -1))))
+		collision = true;
+    if(collision)
+		return 1;
+	return 0;
 }
 void Personnage::gravity(int direction)
 {

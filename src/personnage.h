@@ -30,7 +30,7 @@ class World;
 class Personnage
 {
 public:
-	Personnage(sf::Vector2f position, int hitboxHeight, int hitboxWidth, std::string sprites, World &world);
+	Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight, std::string sprites, World *world);
 	void draw(sf::RenderWindow &window);
 	void move(int direction);
     int collision(int direction);

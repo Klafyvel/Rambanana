@@ -25,6 +25,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
+#include "libjson.h"
+
 #include "personnage.h"
 
 class Bloc
@@ -54,11 +56,19 @@ public:
 	void getMap(std::vector <std::vector <int> > *receiver);
     sf::Vector2f getCaracterPos();
     void updateBloc();
+	bool initialized();
+	void parseJSON(const JSONNode & n);
  
 private:
+	bool m_initialized;
  	int m_debutAffichage;
 	std::vector <std::vector <Bloc> > m_blocs;
-	sf::Texture  m_background;
+	sf::Texture m_texBackground;
+	sf::Sprite m_background;
 	sf::Texture  m_texBlocs;
+	sf::Vector2f m_posInitPers;
+	std::string m_lvlName;
+	std::string m_cheminBackground;
+	std::string m_cheminTexBlocs;
 };
 #endif

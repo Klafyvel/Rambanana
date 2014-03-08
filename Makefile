@@ -22,8 +22,8 @@ EXEC_EDIT = $(EXEC_DIR)Editeur
 DEBUG = yes
 RUNAPP = yes
 
-LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system
-INCLUDE = -I $(HOME)/SFML-2.1/include
+LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system -L ./lib -ljson
+INCLUDE = -I $(HOME)/SFML-2.1/include -I ./include -DNDEBUG
 ifeq ($(DEBUG),yes)
 	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(INCLUDE)
 else

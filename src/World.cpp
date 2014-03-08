@@ -23,7 +23,6 @@ void Bloc::setRect(sf::IntRect rect)
 }
 void Bloc::setSprite(sf::Sprite sprite)
 {
-    std::cout << "Définition de sprite" << std::endl;
     m_sprite = sprite;
 }
 sf::IntRect &Bloc::getRect()
@@ -44,99 +43,53 @@ World::World(const World &world)
     
 World::World(std::string file)
 {
-	std::ifstream lvl(file.c_str(), std::ios::in);
-	if(!lvl)
+	m_initialized = false;
+
+	std::ifstream ficLvl(file.c_str(), std::ios::in);
+	if(!ficLvl)
 	{
 		std::cout << "Impossible de charger le fichier niveau" << std::endl;
 		return;
 	}
-	char c;
+	std::string lvl;
+	while(!ficLvl.eof())
+	{
+		char c;
+		ficLvl.get(c);
+		lvl+=c;
+	}
 
-	std::string background;
-	int w, h;
-	lvl >> background >> w >> h;
+	JSONNode n = libjson::parse(lvl);
+
+	World::parseJSON(n);
 
     sf::Image imageBack;
     sf::Image imageBloc;
-	if(!imageBack.loadFromFile(background))
+	if(!imageBack.loadFromFile(m_cheminBackground))
     {
-        std::cerr << "Image non chargée. (" << background << ")"<<std::endl;
+        std::cerr << "Image non chargée. (" << m_cheminBackground << ")"<<std::endl;
         return;
     }
-    if(!imageBloc.loadFromFile("../sprites/SpritesBloc.bmp"))
+    if(!imageBloc.loadFromFile(m_cheminTexBlocs))
     {
-        std::cerr << "Image non chargée. (" << "../sprites/SpritesBloc.bmp" << ")" <<std::endl;
+        std::cerr << "Image non chargée. (" << m_cheminTexBlocs << ")" <<std::endl;
         return;
     }
     imageBloc.createMaskFromColor(sf::Color(0,38,255));
-    m_background.loadFromImage(imageBack);
+    m_texBackground.loadFromImage(imageBack);
     m_texBlocs.loadFromImage(imageBloc);
 
-	lvl.get(c);
+	m_background.setPosition(sf::Vector2f(0,0));
+	m_background.setTexture(m_texBackground);
 
-	for(int i=0; i<h; i++)
-	{
-		std::vector <Bloc> v;
-		for(int j=0; j<w; j++)
-		{
-			Bloc bloc;
-			v.push_back(bloc);
-		}
-		m_blocs.push_back(v);
-	}
-
-	for(int i=0; i<h; i++)
-	{
-		for(int j=0; j<w; j++)
-		{
-			lvl.get(c);
-			int foo;
-			switch(c)
-			{
-
-				case '0':
-					foo = 0;
-					break;
-				case '1':
-					foo = 1;
-					break;
-				case '2':
-					foo = 2;
-					break;
-				case '3':
-					foo = 3;
-					break;
-				case '4':
-					foo = 4;
-					break;
-				case '5':
-					foo = 5;
-					break;
-				case '6':
-					foo = 6;
-					break;
-				default:
-					break;
-			}
-			if(c!='\n')
-			{
-                sf::IntRect rect(foo * BLOC, 0, BLOC, BLOC);
-				m_blocs[i][j].setRect(rect);
-			}
-		}
-		
-		while(c!='\n')
-		{
-			lvl.get(c);
-		}
-	}	
-	
     World::updateBloc();
 
-	m_debutAffichage = 0;	
+	m_debutAffichage = 0;
+	m_initialized = true;
 }
 void World::draw(sf::RenderWindow &window)
 {
+	window.draw(m_background);
 	for(int i=0; i<m_blocs.size(); i++)
 	{
 		for(int j=0; j<m_blocs[i].size(); j++)
@@ -200,4 +153,66 @@ void World::updateBloc()
         }
     }
 }
-
+bool World::initialized()
+{
+	return m_initialized;
+}
+sf::Vector2f World::getCaracterPos()
+{
+	return m_posInitPers;
+}
+void World::parseJSON(const JSONNode & n)
+{
+    JSONNode::const_iterator i = n.begin();
+	while (i != n.end()){
+		std::string node_name = i->name();
+		if(node_name == "name")
+			m_lvlName = i->as_string();
+		if(node_name == "background")
+			m_cheminBackground = i->as_string();
+		if(node_name == "block_text")
+			m_cheminTexBlocs = i->as_string();
+		if(node_name == "blocks") {
+			for(int foo=0; foo<m_blocs.size(); foo++)
+			{
+				m_blocs.pop_back();
+			}
+			JSONNode arrayH = i->as_array();
+			JSONNode::const_iterator j = arrayH.begin();
+			while(j != arrayH.end())
+			{
+				std::vector <Bloc> v;
+				JSONNode arrayW = j->as_array();
+				JSONNode::const_iterator k = arrayW.begin();
+				while(k != arrayW.end())
+				{
+					Bloc bloc;
+					sf::IntRect rect(/*k->as_int() **/ BLOC, 0, BLOC, BLOC);
+					bloc.setRect(rect);
+					v.push_back(bloc);
+					k++;
+				}
+				m_blocs.push_back(v);
+				j++;
+			}
+		}
+		if(node_name == "ennemys")
+			//TODO: add ennemys to the game ;P
+		if(node_name == "character") {
+			JSONNode character = i->as_node();
+			JSONNode::const_iterator j = character.begin();
+			int x=0;
+			int y=0;
+			while(j!=character.end())
+			{
+				if(j->name()=="init_left")
+					x = 30/*j->as_int()*/;
+				if(j->name()=="init_top")
+					y = 30/*j->as_int()*/;
+				j++;
+			}
+			m_posInitPers = sf::Vector2f(x,y);
+		}
+		i++;
+	}
+}
