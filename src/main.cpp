@@ -34,14 +34,14 @@ int main(int argc, char* argv[])
 
     window.setView(view);
 
-	World world("../lvl/1.lvl.json");
+	World world("../lvl/1.lvl");
 	if(!world.initialized())
 	{
 		std::cerr << "Erreur lors de la création de l'objet World" << std::endl;
 		return 1;
 	}
 
-    Personnage Rambanana(sf::Vector2f(50,50), TAILLE_HITBOX_PERSO_X, TAILLE_HITBOX_PERSO_Y, "../sprites/SpritesRambanana.bmp", &world);
+    Personnage Rambanana(world.getCharacterPos(), TAILLE_HITBOX_PERSO_X, TAILLE_HITBOX_PERSO_Y, "../sprites/SpritesRambanana.bmp", &world);
 
 
 while(window.isOpen())

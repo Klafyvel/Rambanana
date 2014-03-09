@@ -59,9 +59,7 @@ World::World(std::string file)
 		lvl+=c;
 	}
 
-	JSONNode n = libjson::parse(lvl);
-
-	World::parseJSON(n);
+	World::parseJSON(lvl);
 
     sf::Image imageBack;
     sf::Image imageBloc;
@@ -157,62 +155,41 @@ bool World::initialized()
 {
 	return m_initialized;
 }
-sf::Vector2f World::getCaracterPos()
+sf::Vector2f World::getCharacterPos()
 {
 	return m_posInitPers;
 }
-void World::parseJSON(const JSONNode & n)
+void World::parseJSON(std::string json)
 {
-    JSONNode::const_iterator i = n.begin();
-	while (i != n.end()){
-		std::string node_name = i->name();
-		if(node_name == "name")
-			m_lvlName = i->as_string();
-		if(node_name == "background")
-			m_cheminBackground = i->as_string();
-		if(node_name == "block_text")
-			m_cheminTexBlocs = i->as_string();
-		if(node_name == "blocks") {
-			for(int foo=0; foo<m_blocs.size(); foo++)
-			{
-				m_blocs.pop_back();
-			}
-			JSONNode arrayH = i->as_array();
-			JSONNode::const_iterator j = arrayH.begin();
-			while(j != arrayH.end())
-			{
-				std::vector <Bloc> v;
-				JSONNode arrayW = j->as_array();
-				JSONNode::const_iterator k = arrayW.begin();
-				while(k != arrayW.end())
-				{
-					Bloc bloc;
-					sf::IntRect rect(/*k->as_int() **/ BLOC, 0, BLOC, BLOC);
-					bloc.setRect(rect);
-					v.push_back(bloc);
-					k++;
-				}
-				m_blocs.push_back(v);
-				j++;
-			}
-		}
-		if(node_name == "ennemys")
-			//TODO: add ennemys to the game ;P
-		if(node_name == "character") {
-			JSONNode character = i->as_node();
-			JSONNode::const_iterator j = character.begin();
-			int x=0;
-			int y=0;
-			while(j!=character.end())
-			{
-				if(j->name()=="init_left")
-					x = 30/*j->as_int()*/;
-				if(j->name()=="init_top")
-					y = 30/*j->as_int()*/;
-				j++;
-			}
-			m_posInitPers = sf::Vector2f(x,y);
-		}
-		i++;
+	cJSON * root = cJSON_Parse(json.c_str());
+	if(!root)
+	{
+		std::cout << "[Parseur de JSON]Erreur : Impossible de transformer la chaîne reçu en cJSON." << std::endl << "Before [" << cJSON_GetErrorPtr() << "]" << std::endl;
+		std::cout << cJSON_Print(root) << std::endl;
+		return;
 	}
+
+	m_lvlName = cJSON_GetObjectItem(root, "name")->valuestring;
+	m_cheminBackground = cJSON_GetObjectItem(root, "background")->valuestring;
+	m_cheminTexBlocs = cJSON_GetObjectItem(root, "block_text")->valuestring;
+	
+	cJSON * h = cJSON_GetObjectItem(root, "blocks");
+	for(int i=0; i<cJSON_GetArraySize(h); i++)
+	{
+		cJSON * w = cJSON_GetArrayItem(h, i);
+		std::vector <Bloc> v;
+		for(int j=0; j<cJSON_GetArraySize(w); j++)
+		{
+			Bloc bloc;
+			sf::IntRect rect(cJSON_GetArrayItem(w, j)->valueint * BLOC, 0, BLOC, BLOC);
+			bloc.setRect(rect);
+			v.push_back(bloc);
+		}
+		m_blocs.push_back(v);
+	}
+
+	/*TODO:Add ennemys to the game ;)*/
+
+	m_posInitPers = sf::Vector2f(cJSON_GetObjectItem(cJSON_GetObjectItem(root, "character"), "init_left")->valueint * BLOC,
+								 cJSON_GetObjectItem(cJSON_GetObjectItem(root, "character"), "init_top")->valueint * BLOC);
 }

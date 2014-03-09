@@ -25,7 +25,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "libjson.h"
+#include "cJSON.h"
 
 #include "personnage.h"
 
@@ -54,10 +54,10 @@ public:
 	void upgradeBloc(sf::Vector2f pos);
 	void eraseBloc(sf::Vector2f pos);
 	void getMap(std::vector <std::vector <int> > *receiver);
-    sf::Vector2f getCaracterPos();
+    sf::Vector2f getCharacterPos();
     void updateBloc();
 	bool initialized();
-	void parseJSON(const JSONNode & n);
+	void parseJSON(std::string json);
  
 private:
 	bool m_initialized;

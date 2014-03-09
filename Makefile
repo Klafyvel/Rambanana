@@ -19,11 +19,11 @@ EXEC_DIR = bin/
 EXEC_DIR_EXIST :=`ls | grep bin | wc -l`
 EXEC = $(EXEC_DIR)$(NAME)
 EXEC_EDIT = $(EXEC_DIR)Editeur
-DEBUG = yes
+DEBUG = no
 RUNAPP = yes
 
-LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system -L ./lib -ljson
-INCLUDE = -I $(HOME)/SFML-2.1/include -I ./include -DNDEBUG
+LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system -lm
+INCLUDE = -I $(HOME)/SFML-2.1/include
 ifeq ($(DEBUG),yes)
 	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(INCLUDE)
 else
@@ -34,13 +34,13 @@ endif
 #création de l'exécutable
 all: exec_dir 
 	make game 
-	make editor
+#	make editor
 	make clean
 
 exec_dir: mrproper
 	mkdir bin
 
-game: main.o personnage.o World.o
+game: main.o personnage.o World.o cJSON.o
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
@@ -50,7 +50,7 @@ else
 endif
 endif
 
-editor: menu.o mapeditor.o World.o SDLFunc.o
+editor: menu.o mapeditor.o World.o cJSON.o
 	$(CXX) $^ -o $(EXEC_EDIT) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
@@ -67,6 +67,8 @@ World.o: src/World.h src/personnage.h
 personnage.o: src/personnage.h src/World.h
 menu.o: src/menu.h src/World.h
 mapeditor.o: src/mapeditor.h src/menu.h src/World.h src/defines.h
+cJSON.o: src/cJSON.c src/cJSON.h
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 %.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
