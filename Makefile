@@ -19,6 +19,7 @@ EXEC_DIR = bin/
 EXEC_DIR_EXIST :=`ls | grep bin | wc -l`
 EXEC = $(EXEC_DIR)$(NAME)
 EXEC_EDIT = $(EXEC_DIR)Editeur
+
 DEBUG = no
 RUNAPP = yes
 
