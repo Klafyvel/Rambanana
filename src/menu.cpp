@@ -158,8 +158,6 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 		}
 		window.draw(textTitle);
 
-		window.draw(shape);
-
 		window.display();
 
 		for(int i=0; i<rectItems.size(); i++)

@@ -26,7 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "game.h"
 #include "menu.h"
 
-void test(sf::RenderWindow window)
+void test(sf::RenderWindow &window)
 {
 	std::cout << "Coucou !" << std::endl;
 }
