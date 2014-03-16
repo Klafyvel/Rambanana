@@ -36,6 +36,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 	m_valAffichage = 0;
 
 	m_timerAffichage.restart();
+	m_timerMove.restart();
 
     m_tempsPerso = TEMPS_PERSO;
 
@@ -43,7 +44,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 
 }
 void Personnage::draw(sf::RenderWindow &window)
-{
+{ 
     if(m_state.jump)
 	    m_coupe.top = RANG_SAUT * TAILLE_PERSO_Y;
     else if(m_state.run)
@@ -66,7 +67,6 @@ void Personnage::draw(sf::RenderWindow &window)
 }
 void Personnage::move(int direction)
 {
-
     if(direction & IMMOBILE)
     {
         m_state.run=false;
