@@ -17,50 +17,52 @@
 #ifndef H_MENU
 #define H_MENU
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <string>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 #include "color.h"
 
 #include "mapeditor.h"
 
-#define MAX_ITEM 10
-#define MAX_LABEL_LONG 30
+#define SPACEONTEXTSIDE 10
+#define SPACEONTEXTTOP 10
+#define SPACEONTEXTBOTTOM 10
 
-typedef void (*callback)(lvl *world);
+#define TITLESIZE 150
+#define LABELSIZE 75
+#define INTERLIGNE 10
 
-typedef struct Item Item;
-typedef struct Menu Menu;
-struct Item
-{
-    Item* suivant;
-    Menu* sousMenu;
-    callback fonction;
-    char label[MAX_LABEL_LONG];
+typedef void (*callback)(sf::RenderWindow &window);
+
+class Menu;
+
+struct Item {
+	Item();
+	Menu* subMenu; 
+	callback function;
+	std::string label;
 };
 
-struct Menu
+class Menu
 {
-    int nombreItem;
-    Item* premier;
-    char titre[100];
+public:
+	Menu(std::string title);
+	void addItem(callback function, std::string label);
+	void addSubMenu(Menu *subMenu, std::string label);
+	void removeItemByLabel(std::string label);
+	void removeItemByActionNumber(int action);
+	void doFromActionNumber(int action, sf::RenderWindow &window);
+	int chooseAnActionNumber(sf::RenderWindow &window);
+	sf::Vector2u getTextSize();
+	unsigned int getMaxTextWidth();
+	unsigned int getTextHeight();
+private:
+    std::vector <struct Item> m_items;
+    std::string m_title;
+	/*bool isASubMenu;*/
 };
-
-int Menu_newItem(Item* item, callback fonction, const char nom[]);
-int Menu_newItemSubMenu(Item* item, Menu* subMenu, const char nom[]);
-
-int Menu_new(Menu* menu, char titre[]);
-int Menu_addItem(Menu* menu, Item* item);
-int Menu_removeItemByLabel(Menu* menu, const char nom[]);
-int Menu_removeItemById(Menu* menu, int id);
-int Menu_do(Menu* menu, int action, lvl* world);
-int Menu_choose(Menu* menu);
-
-int Menu_setSubMenu(Item* item, Menu* subMenu);
-
-long inputLong(void);
-int lire(char *chaine, int longueur);
 
 
 #endif

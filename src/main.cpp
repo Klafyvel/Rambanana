@@ -19,98 +19,37 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include <string>
 
 #include "World.h"
 #include "defines.h"
 #include "personnage.h"
+#include "game.h"
+#include "menu.h"
+
+void test(sf::RenderWindow window)
+{
+	std::cout << "Coucou !" << std::endl;
+}
+
 
 int main(int argc, char* argv[])
 {
+
     //Window
     sf::RenderWindow window(sf::VideoMode(TAILLE_X, TAILLE_Y), "Rambanana !");
 
-    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
+	window.setVerticalSyncEnabled(true);
 
-    window.setView(view);
+	Menu menu("Rambanana !");
 
-	World world("../lvl/1.lvl");
-	if(!world.initialized())
+	menu.addItem(&game, "Jouer");
+	menu.addItem(&test, "Testeuuuu");
+	
+	while(window.isOpen())
 	{
-		std::cerr << "Erreur lors de la création de l'objet World" << std::endl;
-		return 1;
+		int choix = menu.chooseAnActionNumber(window);
+		menu.doFromActionNumber(choix, window);
 	}
 
-    Personnage Rambanana(world.getCharacterPos(), TAILLE_HITBOX_PERSO_X, TAILLE_HITBOX_PERSO_Y, "../sprites/SpritesRambanana.bmp", &world);
-
-
-while(window.isOpen())
-{
-        bool moving = false;
-        sf::Event event;
-        while(window.pollEvent(event))
-        {
-            switch(event.type)
-            {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-				case sf::Event::MouseButtonPressed:
-					std::cout << world.typeBloc(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)) << std::endl;
-					break;
-                case sf::Event::KeyPressed:
-                    switch(event.key.code)
-                    {
-                        case sf::Keyboard::A:
-                            view.zoom(0.5);
-                            window.setView(view);
-                            break;
-                        case sf::Keyboard::Z:
-                            view.zoom(2);
-                            window.setView(view);
-                            break;
-                        case sf::Keyboard::Q:
-                            view.move(sf::Vector2f(-5,0));
-                            window.setView(view);
-							break;
-                        case sf::Keyboard::Left:
-                            moving = true;
-							Rambanana.move(COUR | GAUCHE);
-                            break;
-                        case sf::Keyboard::S:
-                            view.move(sf::Vector2f(5,0));
-                            window.setView(view);
-							break;
-                        case sf::Keyboard::Right:
-                            moving = true;
-							Rambanana.move(COUR | DROITE);
-                            break;/*
-case sf::Keyboard::Left:
-moving = true;
-Rambanana.move(SAUTE);
-break;*/
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        if(!moving)
-        {
-            Rambanana.move(IMMOBILE);
-        }
-        Rambanana.gravity(BAS);
-
-        window.clear(sf::Color::Black);
-        world.draw(window);
-Rambanana.draw(window);
-
-        window.display();
-
-
-}
-
-return 0;
+	return 0;
 }

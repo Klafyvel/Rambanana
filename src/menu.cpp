@@ -16,196 +16,189 @@
 */
 #include "menu.h"
 
-int Menu_new(Menu* menu, char titre[]) // Fonction pour initialiser le menu.
+Item::Item()
 {
-    menu->nombreItem = 0; // Il n'y a pas encore d'items...
-    menu->premier = NULL; // Il n'y a pas non plus de premier item du coup :o)
-    if(strlen(titre) <= 100) // Si le titre donné n'est pas trop grand...
-    {
-        strcpy(menu->titre, titre); // ... on l'afecte comme titre.
-    }
-    else // sinon on crée une erreur
-    {
-        return 0;
-    }
-
-	return 1;
+	subMenu = NULL;
+	function =NULL;
+	label="";
 }
 
-int Menu_addItem(Menu* menu, Item* item) // Fonction pour ajouter un item à un menu.
+Menu::Menu(std::string title)
 {
-    if(menu->nombreItem==0) // si c'est le premier item
-    {
-        menu->premier = item;
-    }
-    else
-    {
-        Item* buffer = NULL;
-        buffer=menu->premier; // On fait pointer un buffer sur le premier élément de menu.
-        if(buffer == NULL)
-            return 0;
-        while(buffer->suivant) // Tant qu'on est pas au dernier élément...
-        {
-            buffer = buffer->suivant; // ...on passe à l'item suivant.
-        }
-        buffer->suivant = item; // On affecte notre item comme dernier élément du menu.
-    }
-	menu->nombreItem ++; // On incrémente aussi le nombre d'items.
-
-	return 1;
+	m_title = title;
 }
 
-int Menu_removeItemByLabel(Menu* menu, const char nom[]) // Fonction pour enlever un item d'un menu à partir de son nom.
+void Menu::addItem(callback function, std::string label)
 {
-	Item* item = menu->premier; // Un buffer pour parcourir les items.
-	while(strcmp(item->suivant->label, nom)) // On parcour les items.
+	struct Item item;
+	item.function = function;
+	item.label = label;
+	item.subMenu = NULL;
+	m_items.push_back(item);
+}
+
+void Menu::addSubMenu(Menu *subMenu, std::string label)
+{
+	struct Item item;
+	item.subMenu = subMenu;
+	item.function = NULL;
+	item.label = label;
+	m_items.push_back(item);
+}
+
+void Menu::removeItemByLabel(std::string label)
+{
+	for(int i=0; i<m_items.size(); i++)
 	{
-		item = item->suivant;
+		if(m_items[i].label == label)
+			Menu::removeItemByActionNumber(i);
 	}
-	item->suivant = item->suivant->suivant; // On "recable" le tout !
-
-	return 1;
 }
 
-int Menu_removeItemById(Menu* menu, int id) // Fonction pour détruire un item à partir de son id.
+void Menu::removeItemByActionNumber(int action)
 {
-    if((id < 0)||(id >= menu->nombreItem)) // Si l'id ne correspond pas...
-    {
-        return 0; // ...On crée une erreur.
-    }
-    else // Sinon l'id correspond.
-    {
+    if((action < 0)||(action >= m_items.size()))
+        return;
+	m_items.erase(m_items.begin() + action);
+}
 
-        int i; // On crée un buffer.
-	Item* item = menu->premier; // Et un deuxième buffer !
-        for(i = 1; i<id; i++) // On va jusqu'à l'item qui précède celui que l'on souhaite retirer.
+unsigned int Menu::getTextHeight()
+{
+	return TITLESIZE + m_items.size() * (LABELSIZE + INTERLIGNE);
+}
+
+unsigned int Menu::getMaxTextWidth()
+{
+	int largest = 0;
+	for(int i=0; i<m_items.size(); i++)
+	{
+		if(m_items[i].label.length() > largest)
+			largest = m_items[i].label.size();
+	}
+	return largest * LABELSIZE;
+}
+
+sf::Vector2u Menu::getTextSize()
+{
+	return sf::Vector2u(Menu::getMaxTextWidth() + 2*SPACEONTEXTSIDE,
+						Menu::getTextHeight() + SPACEONTEXTTOP + SPACEONTEXTBOTTOM);
+}
+
+int Menu::chooseAnActionNumber(sf::RenderWindow &window)
+{
+	window.setSize(Menu::getTextSize());
+	sf::View view(sf::Vector2f(Menu::getMaxTextWidth()/2,Menu::getTextHeight()/2), sf::Vector2f(Menu::getTextSize()));
+	window.setView(view);
+
+	int choix = -1;
+
+	int x = -1;
+	int y = -1;
+
+	sf::Font titleFont;
+	sf::Font itemFont;
+	if(!titleFont.loadFromFile("../font/Bananananananana.ttf") || !itemFont.loadFromFile("../font/Fipps-Regular.otf"))
+		return -1;
+
+	sf::Text textTitle;
+	textTitle.setFont(titleFont);
+	textTitle.setString(m_title);
+	textTitle.setCharacterSize(TITLESIZE);
+	textTitle.setColor(sf::Color::Yellow);
+	textTitle.setPosition(sf::Vector2f(SPACEONTEXTSIDE, SPACEONTEXTTOP));
+
+	std::vector <sf::Text> textItems;
+
+	std::vector <sf::IntRect> rectItems;
+
+	int yText = SPACEONTEXTTOP + TITLESIZE + INTERLIGNE;
+ 
+	for(int i=0; i<m_items.size(); i++)
+	{
+		sf::Text text;
+		text.setFont(itemFont);
+		text.setString(m_items[i].label);
+		text.setCharacterSize(LABELSIZE);
+		text.setColor(sf::Color::Green);
+		text.setPosition(sf::Vector2f(SPACEONTEXTSIDE, yText));
+		textItems.push_back(text);
+
+
+		sf::IntRect rect(SPACEONTEXTSIDE, yText, Menu::getMaxTextWidth()-SPACEONTEXTSIDE, LABELSIZE);
+		rectItems.push_back(rect);
+
+		yText += LABELSIZE + INTERLIGNE;
+	}
+
+	while(((choix < 0) || (choix > m_items.size() + 1)) && window.isOpen())
+    {
+		sf::Event event;
+		while(window.pollEvent(event))
 		{
-			item = item->suivant;
+			switch(event.type)
+			{
+				case sf::Event::Closed:
+					window.close();
+					choix = -1;
+					break;
+				case sf::Event::MouseButtonPressed:
+					x = event.mouseButton.x;
+					y = event.mouseButton.y;
+					break;
+				default:
+					break;
+			}
 		}
-		item->suivant = item->suivant->suivant; // Et on "recâble" !
-        menu->nombreItem --; // Enfin, on décrémente le nombre d'items
-    }
-	return 1;
-}
 
-void Menu_free(Menu* menu) // Fonction pour détruire tout les items du tableau.
-{
-    int buffer;
-    for(buffer = 0; buffer < menu->nombreItem; buffer ++)
-    {
-        Menu_removeItemById(menu, buffer);
-    }
-}
+		window.clear(sf::Color::Black);
 
+		for(int i=0; i<rectItems.size(); i++)
+		{
+			window.draw(textItems[i]);
+		}
+		window.draw(textTitle);
 
-int Menu_choose(Menu* menu) // Fonction pour choisir une id
-{
-    long choix = 0; // Le choix de l'utilisateur
-    while((choix <= 0) || (choix > menu->nombreItem+1))
-    {
-		clrscr();
-        int buffer; // un buffer
-		Item* item = menu->premier; // le premier item de la liste
-        printf("-------- %s --------\n", menu->titre); // On affiche le titre.
-        for(buffer = 0; buffer < menu->nombreItem; buffer++)
-        {
-            printf("%d- %s\n", buffer+1, item->label); // On affiche les différents choix.
-	    item = item->suivant;
-        }
-        printf("%d- Quitter\n", menu->nombreItem + 1);
-        choix = inputLong(); // On récupère l'entrée utilisateur.
-    }
-	clrscr();
-    if(choix==(menu->nombreItem + 1)) // si on choisis de quitter le programme
-    {
+		window.draw(shape);
+
+		window.display();
+
+		for(int i=0; i<rectItems.size(); i++)
+		{
+			if(((x > rectItems[i].left) && (x < (rectItems[i].left + rectItems[i].width)))&&(y > rectItems[i].top && (y < (rectItems[i].top + rectItems[i].height))))
+			{
+				choix = i;
+				x=-1;
+				y=-1;
+			}
+		}
+	}
+/*	if(choix==(m_items.size() + 1)) // si on choisis de quitter le programme
+	{
         return -1;
     }
     else
-    {
-        return (int)(choix - 1);
-    }
+    {*/
+       return choix;
+	//}
 }
 
-int lire(char *chaine, int longueur) //extrait du cour sur le C
+void Menu::doFromActionNumber(int action, sf::RenderWindow &window)
 {
-    char *positionEntree = NULL;
-
-    // On lit le texte saisi au clavier
-    if (fgets(chaine, longueur, stdin) != NULL)  // Pas d'erreur de saisie ?
+    if((action<0)||(action >= m_items.size()))
     {
-        positionEntree = strchr(chaine, '\n'); // On recherche l'"Entrée"
-        if (positionEntree != NULL) // Si on a trouvé le retour à la ligne
-        {
-            *positionEntree = '\0'; // On remplace ce caractère par \0
-        }
-        return 1; // On renvoie 1 si la fonction s'est déroulée sans erreur
+        return ;
     }
     else
     {
-        return 0; // On renvoie 0 s'il y a eu une erreur
+		callback function;
+		if(m_items[action].function)
+		{
+			function = m_items[action].function;
+	        function(window);
+	    }
+	    else if(m_items[action].subMenu)
+	    {
+	        m_items[action].subMenu->doFromActionNumber(m_items[action].subMenu->chooseAnActionNumber(window), window);
+	    }
     }
 }
-
-long inputLong() //extrait du cour sur le C
-{
-    char nombreTexte[100] = {0}; // 100 cases devraient suffire
-
-    if (lire(nombreTexte, 100))
-    {
-        // Si lecture du texte ok, convertir le nombre en long et le retourner
-        return strtol(nombreTexte, NULL, 10);
-    }
-    else
-    {
-        // Si problème de lecture, renvoyer 0
-        return 0;
-    }
-}
-
-int Menu_do(Menu* menu, int action, lvl* world)
-{
-    if((action<0)||(action >= menu->nombreItem))
-    {
-        return 0;
-    }
-    else
-    {
-    callback fonction;
-	int i;
-	Item* item = menu->premier;
-	for(i=0; i<action; i++)
-	{
-	    item = item->suivant;
-	}
-	if(item->fonction)
-	{
-        fonction = item->fonction;
-        fonction(world);
-    }
-    else if(item->sousMenu)
-    {
-        Menu_do(item->sousMenu, Menu_choose(item->sousMenu), world);
-    }
-    }
-    return 1;
-}
-
-int Menu_newItem(Item* item, callback fonction, const char nom[])
-{
-    item->fonction = fonction;
-    strcpy(item->label, nom);
-    item->suivant=NULL;
-    item->sousMenu=NULL;
-
-    return 1;
-}
-int Menu_newItemSubMenu(Item* item, Menu* subMenu, const char nom[])
-{
-    item->fonction = NULL;
-    item->sousMenu = subMenu;
-    strcpy(item->label, nom);
-    item->suivant = NULL;
-    return 1;
-}
-
-

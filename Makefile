@@ -41,7 +41,7 @@ all: exec_dir
 exec_dir: mrproper
 	mkdir bin
 
-game: main.o personnage.o World.o cJSON.o
+game: main.o game.o personnage.o World.o cJSON.o menu.o
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
@@ -63,7 +63,8 @@ endif
 
 	
 
-main.o: src/personnage.h src/defines.h src/World.h
+main.o: src/personnage.h src/defines.h src/World.h src/game.h
+game.o: src/game.h src/defines.h src/World.h src/personnage.h
 World.o: src/World.h src/personnage.h
 personnage.o: src/personnage.h src/World.h
 menu.o: src/menu.h src/World.h
