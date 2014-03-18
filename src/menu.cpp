@@ -90,6 +90,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 	sf::View view(sf::Vector2f(Menu::getMaxTextWidth()/2,Menu::getTextHeight()/2), sf::Vector2f(Menu::getTextSize()));
 	window.setView(view);
 
+
 	int choix = -1;
 
 	int x = -1;
@@ -97,7 +98,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 	sf::Font titleFont;
 	sf::Font itemFont;
-	if(!titleFont.loadFromFile("../font/Bananananananana.ttf") || !itemFont.loadFromFile("../font/Fipps-Regular.otf"))
+	if(!titleFont.loadFromFile("../font/Bananananananana.ttf") || !itemFont.loadFromFile("../font/BATMAN.TTF"))
 		return -1;
 
 	sf::Text textTitle;
@@ -120,14 +121,21 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 		text.setCharacterSize(LABELSIZE);
 		text.setColor(sf::Color::Green);
 		text.setPosition(sf::Vector2f(SPACEONTEXTSIDE, yText));
+
+		std::string str;
 		if(i<m_items.size())
-			text.setString(m_items[i].label);
+			str = m_items[i].label;
 		else
-			text.setString("Quitter");
-		
+			str = "Quitter";
+
+		str.insert(0, "[");
+		str.append("]");
+	
+		text.setString(str);
+
 		textItems.push_back(text);
 
-		sf::IntRect rect(SPACEONTEXTSIDE, yText, Menu::getMaxTextWidth()-SPACEONTEXTSIDE, LABELSIZE);
+		sf::IntRect rect(SPACEONTEXTSIDE, yText, Menu::getMaxTextWidth()-SPACEONTEXTSIDE, LABELSIZE * 1.5);
 		rectItems.push_back(rect);
 
 		yText += LABELSIZE + INTERLIGNE;

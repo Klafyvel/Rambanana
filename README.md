@@ -34,3 +34,7 @@ Dépendances
 cJSON -> http://sourceforge.net/projects/cjson/ par Dave Gamble.
 
 SFML2 -> http://sfml-dev.org/ par Laurent Gomila
+
+Bananananananana -> http://www.dafont.com/fr/bananananananana.font par Beth Nott
+
+Federico -> http://www.dafont.com/fr/federico.font?l[]=10&l[]=1 par woodcuter
