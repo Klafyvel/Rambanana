@@ -36,7 +36,6 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 	m_valAffichage = 0;
 
 	m_timerAffichage.restart();
-	m_timerMove.restart();
 
     m_tempsPerso = TEMPS_PERSO;
 

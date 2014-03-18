@@ -28,11 +28,11 @@
 
 #define SPACEONTEXTSIDE 10
 #define SPACEONTEXTTOP 10
-#define SPACEONTEXTBOTTOM 10
+#define SPACEONTEXTBOTTOM 50
 
 #define TITLESIZE 150
 #define LABELSIZE 75
-#define INTERLIGNE 10
+#define INTERLIGNE 50
 
 typedef void (*callback)(sf::RenderWindow &window);
 

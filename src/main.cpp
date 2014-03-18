@@ -44,11 +44,13 @@ int main(int argc, char* argv[])
 
 	menu.addItem(&game, "Jouer");
 	menu.addItem(&test, "Testeuuuu");
+	int choix = 0;
 	
-	while(window.isOpen())
+	while(window.isOpen() && choix >= 0)
 	{
-		int choix = menu.chooseAnActionNumber(window);
-		menu.doFromActionNumber(choix, window);
+		choix = menu.chooseAnActionNumber(window);
+		if(choix >= 0)
+			menu.doFromActionNumber(choix, window);
 	}
 
 	return 0;

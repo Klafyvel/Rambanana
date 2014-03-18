@@ -64,7 +64,7 @@ void Menu::removeItemByActionNumber(int action)
 
 unsigned int Menu::getTextHeight()
 {
-	return TITLESIZE + m_items.size() * (LABELSIZE + INTERLIGNE);
+	return TITLESIZE + (m_items.size()+1) * (LABELSIZE + INTERLIGNE);
 }
 
 unsigned int Menu::getMaxTextWidth()
@@ -75,7 +75,7 @@ unsigned int Menu::getMaxTextWidth()
 		if(m_items[i].label.length() > largest)
 			largest = m_items[i].label.size();
 	}
-	return largest * LABELSIZE;
+	return largest * LABELSIZE * 1.25;
 }
 
 sf::Vector2u Menu::getTextSize()
@@ -113,16 +113,19 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 	int yText = SPACEONTEXTTOP + TITLESIZE + INTERLIGNE;
  
-	for(int i=0; i<m_items.size(); i++)
+	for(int i=0; i<=m_items.size(); i++)
 	{
 		sf::Text text;
 		text.setFont(itemFont);
-		text.setString(m_items[i].label);
 		text.setCharacterSize(LABELSIZE);
 		text.setColor(sf::Color::Green);
 		text.setPosition(sf::Vector2f(SPACEONTEXTSIDE, yText));
+		if(i<m_items.size())
+			text.setString(m_items[i].label);
+		else
+			text.setString("Quitter");
+		
 		textItems.push_back(text);
-
 
 		sf::IntRect rect(SPACEONTEXTSIDE, yText, Menu::getMaxTextWidth()-SPACEONTEXTSIDE, LABELSIZE);
 		rectItems.push_back(rect);
@@ -130,7 +133,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 		yText += LABELSIZE + INTERLIGNE;
 	}
 
-	while(((choix < 0) || (choix > m_items.size() + 1)) && window.isOpen())
+	while((choix < 0) && window.isOpen())
     {
 		sf::Event event;
 		while(window.pollEvent(event))
@@ -170,14 +173,10 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 			}
 		}
 	}
-/*	if(choix==(m_items.size() + 1)) // si on choisis de quitter le programme
-	{
+	if(choix==(m_items.size())) // si on choisis de quitter le programme
         return -1;
-    }
     else
-    {*/
        return choix;
-	//}
 }
 
 void Menu::doFromActionNumber(int action, sf::RenderWindow &window)
