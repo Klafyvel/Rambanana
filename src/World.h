@@ -46,8 +46,8 @@ class Personnage;
 class World
 {
 public:
-	World(std::string file = "");
-    World(const World &world);
+	World(std::string file, sf::RenderWindow *window);
+    //World(const World &world);
 	int typeBloc(sf::Vector2f pos);
     void draw(sf::RenderWindow &window);
 	void scroll(int direction);
@@ -70,5 +70,6 @@ private:
 	std::string m_lvlName;
 	std::string m_cheminBackground;
 	std::string m_cheminTexBlocs;
+	sf::RenderWindow *m_window;
 };
 #endif

@@ -36,6 +36,7 @@ public:
     int collision(int direction);
     void gravity(int direction);
     void corrigeCollision();
+	void setAutoScroll(bool state);
 private:
 	int m_life;
 	
@@ -46,7 +47,8 @@ private:
         bool run;
         bool left;
     }m_state;
- 	
+
+ 	 
 	sf::IntRect m_hitbox;
 
 	sf::IntRect m_coupe;
@@ -57,6 +59,8 @@ private:
 	sf::Clock m_timerAffichage;
 
     World *m_world;
+
+	bool m_autoScroll;
 
     int m_energieSaut;
 };

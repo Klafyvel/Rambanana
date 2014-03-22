@@ -3,7 +3,8 @@
 
 Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight, std::string sprites, World *world)
 {
-	
+	m_autoScroll = false;
+
     m_world = world; 
     m_life = 100;
 
@@ -22,7 +23,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
     m_sprite.setTexture(m_texSprites);
 	m_sprite.setScale(AGRANDISSEMENT_PERSO, AGRANDISSEMENT_PERSO);
 	m_sprite.setOrigin(sf::Vector2f(0,0));
-
+ 
 	m_state.jump=false;
 	m_state.run=false;
 	m_state.left=false;
@@ -63,6 +64,19 @@ void Personnage::draw(sf::RenderWindow &window)
 	m_coupe.left = m_valAffichage * TAILLE_PERSO_X;
     m_sprite.setTextureRect(m_coupe);
     window.draw(m_sprite);
+	if(m_autoScroll)
+	{
+		sf::Vector2i pos1 = window.mapCoordsToPixel(sf::Vector2f(m_hitbox.left, m_hitbox.top));
+		sf::Vector2i pos2 = window.mapCoordsToPixel(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height));
+		if(pos1.x<(TAILLE_X - SCROLL_BOX_W)/2)
+			m_world->scroll(GAUCHE);
+		else if(pos2.x >(TAILLE_X + SCROLL_BOX_W)/2)
+			m_world->scroll(DROITE);
+		if(pos1.y <(TAILLE_Y - SCROLL_BOX_H)/2)
+			m_world->scroll(HAUT);
+		else if(pos2.y > (TAILLE_Y + SCROLL_BOX_H)/2)
+			m_world->scroll(BAS);
+	}
 }
 void Personnage::move(int direction)
 {
@@ -109,13 +123,7 @@ void Personnage::move(int direction)
         m_tempsPerso=TEMPS_PERSO;
 
     m_sprite.setPosition(sf::Vector2f(m_hitbox.left - ((TAILLE_PERSO_AFFICHE_X - m_hitbox.width)/2), m_hitbox.top - ((TAILLE_PERSO_AFFICHE_Y - m_hitbox.height)/2)));
-/*
-	std::cout << "Personnage: " << std::endl;
-	std::cout << "\t m_sprite.left = " << m_sprite.getPosition().x << std::endl;
-	std::cout << "\t m_sprite.top = " << m_sprite.getPosition().y << std::endl;
-	std::cout << "\t m_hitbox.left = " << m_hitbox.left << std::endl;
-	std::cout << "\t m_hitbox.top = " << m_hitbox.top << std::endl;
-*/
+
 }
 int Personnage::collision(int direction)
 {
@@ -153,4 +161,7 @@ void Personnage::corrigeCollision()
         return 1;
     return 0;
 */}//to be modified
-
+void Personnage::setAutoScroll(bool state)
+{
+	m_autoScroll = state;
+}

@@ -40,5 +40,7 @@
 
 #define ENERGIE_SAUT 10000
 
+#define SCROLL_BOX_W 0.5 * TAILLE_X
+#define SCROLL_BOX_H 0.5 * TAILLE_Y
 
 #endif

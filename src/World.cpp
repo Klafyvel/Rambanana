@@ -33,15 +33,15 @@ sf::Sprite &Bloc::getSprite()
 {
     return m_sprite;
 }
-World::World(const World &world) 
+/*World::World(const World &world) 
 {
     m_debutAffichage = world.m_debutAffichage;
     m_blocs = world.m_blocs;
     m_background = world.m_background;
     m_texBlocs = world.m_texBlocs;
-}
+}*/
     
-World::World(std::string file)
+World::World(std::string file,  sf::RenderWindow *window)
 {
 	m_initialized = false;
 
@@ -83,6 +83,9 @@ World::World(std::string file)
     World::updateBloc();
 
 	m_debutAffichage = 0;
+
+	m_window = window;
+
 	m_initialized = true;
 }
 void World::draw(sf::RenderWindow &window)
@@ -96,14 +99,21 @@ void World::draw(sf::RenderWindow &window)
 		}
 	}
 }
-/*
-void World::scroll(int mvX)
+
+void World::scroll(int direction)
 {
-	if((mvX & GAUCHE)&&(m_debutAffichage <=-5))
-		m_debutAffichage += 5;
-	if(mvX & DROITE)
-		m_debutAffichage -= 5;
-}*/
+	sf::View view = m_window->getView();
+
+	if(direction & GAUCHE)
+		view.move(-1.1 * PAS_DEPLACEMENT_X, 0);
+	if(direction & DROITE)
+		view.move(1.1 * PAS_DEPLACEMENT_X, 0);
+	if(direction & HAUT)
+		view.move(0, -1.1 *  PAS_DEPLACEMENT_Y);
+	if(direction & BAS)
+		view.move(0,1.1 * PAS_DEPLACEMENT_Y);
+	m_window->setView(view);
+}
 int World::typeBloc(sf::Vector2f pos)
 {
 	return (m_blocs[pos.y/BLOC][(pos.x-m_debutAffichage)/BLOC].getRect().left) / BLOC;
