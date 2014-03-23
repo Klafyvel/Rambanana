@@ -48,6 +48,11 @@ private:
         bool left;
     }m_state;
 
+	struct s_saut {
+		double v_y;
+		double v_saut;
+		double v_gravitation;
+	} m_buffJump;
  	 
 	sf::IntRect m_hitbox;
 

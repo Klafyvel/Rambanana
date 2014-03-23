@@ -28,7 +28,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 	m_state.run=false;
 	m_state.left=false;
 
-
+ 
 	m_coupe.left = 0;
 	m_coupe.top = 0;
 	m_coupe.width = TAILLE_PERSO_X;
@@ -41,6 +41,10 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
     m_tempsPerso = TEMPS_PERSO;
 
     m_energieSaut = ENERGIE_SAUT;
+
+	m_buffJump.v_y = 0;
+	m_buffJump.v_saut = -PAS_DEPLACEMENT_Y;
+	m_buffJump.v_gravitation = 0.1;
 
 }
 void Personnage::draw(sf::RenderWindow &window)
@@ -83,7 +87,8 @@ void Personnage::move(int direction)
     if(direction & IMMOBILE)
     {
         m_state.run=false;
-        m_state.jump=false;
+		if(Personnage::collision(BAS))
+			m_state.jump=false;
     }
     if(direction & DROITE)
         m_state.left=false;
@@ -92,11 +97,9 @@ void Personnage::move(int direction)
     if(direction & COUR)
     {
         m_state.run=true;
-        m_state.jump=false;
     }
     if(direction & SAUTE)
     {
-        m_state.run=false;
         m_state.jump=true;
     }
     if((direction & HAUT)&&(m_energieSaut > 0))
@@ -114,10 +117,14 @@ void Personnage::move(int direction)
             m_hitbox.left -= PAS_DEPLACEMENT_X;
         if((m_state.run && !m_state.left) && !Personnage::collision(DROITE))
             m_hitbox.left += PAS_DEPLACEMENT_X;
-        if(m_state.jump && m_state.left)
-            Personnage::move(HAUT | GAUCHE | COUR);
-        if(m_state.jump && !m_state.left)
-            Personnage::move(HAUT | DROITE | COUR);
+        if(m_state.jump && ((m_buffJump.v_y <= 0 && !Personnage::collision(HAUT))||(m_buffJump.v_y > 0 && !Personnage::collision(BAS))))
+        {
+			if(m_buffJump.v_y == 0)
+				m_buffJump.v_y = m_buffJump.v_saut;
+
+			m_buffJump.v_y += m_buffJump.v_gravitation;
+			m_hitbox.top += m_buffJump.v_y;
+		}
     }
     else
         m_tempsPerso=TEMPS_PERSO;
@@ -132,17 +139,39 @@ int Personnage::collision(int direction)
 		collision = true;
     if((direction & DROITE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - 1))))
 		collision = true;
-    if((direction & HAUT) && m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))
-		collision = true;
-    if((direction & BAS) && (m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y - 1)) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y -1))))
-		collision = true;
+    if(direction & HAUT)
+	{
+		if (m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_buffJump.v_y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_buffJump.v_y))))
+		{
+			collision = true;
+			m_buffJump.v_y = 0;
+			m_state.jump = false;
+		}
+		else if ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + PAS_DEPLACEMENT_Y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + PAS_DEPLACEMENT_Y)))
+		{	
+			collision = true;
+		}
+	}
+    if((direction & BAS))
+	{
+		if (m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + m_buffJump.v_y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + m_buffJump.v_y))))
+		{
+			collision = true;
+			m_buffJump.v_y = 0;
+			m_state.jump = false;
+		}
+		else if ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y)))
+		{	
+			collision = true;
+		}
+	}
     if(collision)
 		return 1;
 	return 0;
 }
 void Personnage::gravity(int direction)
 {
-    if(!Personnage::collision(direction))
+    if(!Personnage::collision(direction) && !m_state.jump)
         Personnage::move(direction);
 }
 void Personnage::corrigeCollision()
