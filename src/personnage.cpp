@@ -44,7 +44,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 
 	m_buffJump.v_y = 0;
 	m_buffJump.v_saut = -PAS_DEPLACEMENT_Y;
-	m_buffJump.v_gravitation = 0.1;
+	m_buffJump.v_gravitation = 0.2;
 
 }
 void Personnage::draw(sf::RenderWindow &window)
@@ -135,34 +135,36 @@ void Personnage::move(int direction)
 int Personnage::collision(int direction)
 {
 	bool collision = false;
-    if((direction & GAUCHE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height -1))))
-		collision = true;
-    if((direction & DROITE) && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - 1))))
-		collision = true;
+    if(direction & GAUCHE)
+	{
+		if(m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height - m_buffJump.v_y))))
+			collision = true;
+		else if((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height - PAS_DEPLACEMENT_Y)))
+			collision = true;
+	}
+    if(direction & DROITE)
+	{
+		if(m_state.jump &&((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - m_buffJump.v_y))))
+			collision = true;
+		if((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - PAS_DEPLACEMENT_Y)))
+			collision = true;
+	}
     if(direction & HAUT)
 	{
-		if (m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_buffJump.v_y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_buffJump.v_y))))
+		if (((m_world->typeBloc(sf::Vector2f(m_hitbox.left + PAS_DEPLACEMENT_X, m_hitbox.top)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width - PAS_DEPLACEMENT_X - 1, m_hitbox.top))))
 		{
 			collision = true;
 			m_buffJump.v_y = 0;
 			m_state.jump = false;
-		}
-		else if ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + PAS_DEPLACEMENT_Y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + PAS_DEPLACEMENT_Y)))
-		{	
-			collision = true;
 		}
 	}
     if((direction & BAS))
 	{
-		if (m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + m_buffJump.v_y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + m_buffJump.v_y))))
+		if (((m_world->typeBloc(sf::Vector2f(m_hitbox.left + PAS_DEPLACEMENT_X, m_hitbox.top + m_hitbox.height)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width - PAS_DEPLACEMENT_X, m_hitbox.top + m_hitbox.height))))
 		{
 			collision = true;
 			m_buffJump.v_y = 0;
 			m_state.jump = false;
-		}
-		else if ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height + PAS_DEPLACEMENT_Y)))
-		{	
-			collision = true;
 		}
 	}
     if(collision)
