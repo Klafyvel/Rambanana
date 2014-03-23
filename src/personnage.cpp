@@ -56,13 +56,17 @@ void Personnage::draw(sf::RenderWindow &window)
     else
         m_coupe.top = RANG_IMMOBILE * TAILLE_PERSO_Y;
 
-	if(m_timerAffichage.getElapsedTime() >= sf::milliseconds(m_tempsPerso))
+	if((m_timerAffichage.getElapsedTime() >= sf::milliseconds(m_tempsPerso)) && !m_state.jump)
 	{
 		m_timerAffichage.restart();
 		m_valAffichage ++;
 		if(m_valAffichage > IMAGES_PAR_MOUVEMENT - 1)
 			m_valAffichage = 0;
 	}
+	else if(m_state.jump && m_buffJump.v_y <=0)
+		m_valAffichage = 0;
+	else if(m_state.jump && m_buffJump.v_y > 0)
+		m_valAffichage = 1;
     if(m_state.left)
         m_coupe.top += TAILLE_PERSO_Y;
 	m_coupe.left = m_valAffichage * TAILLE_PERSO_X;
@@ -135,19 +139,27 @@ void Personnage::move(int direction)
 int Personnage::collision(int direction)
 {
 	bool collision = false;
+	int borneH = 0;
+	int borneW = 0;
+	if(m_state.jump)
+		borneH = m_hitbox.height - m_buffJump.v_y;
+	else
+		borneH = m_hitbox.height - PAS_DEPLACEMENT_Y;
     if(direction & GAUCHE)
 	{
-		if(m_state.jump && ((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height - m_buffJump.v_y))))
-			collision = true;
-		else if((m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)))||m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height - PAS_DEPLACEMENT_Y)))
-			collision = true;
+		for(int i = 0; i<borneH; i++)
+		{
+			if(m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + i)))
+				collision = true;
+		}
 	}
     if(direction & DROITE)
 	{
-		if(m_state.jump &&((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - m_buffJump.v_y))))
-			collision = true;
-		if((m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top))) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width , m_hitbox.top + m_hitbox.height - PAS_DEPLACEMENT_Y)))
-			collision = true;
+		for(int i=0; i<borneH; i++)
+		{
+			if(m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + i)))
+				collision = true;
+		}
 	}
     if(direction & HAUT)
 	{

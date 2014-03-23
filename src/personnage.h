@@ -37,7 +37,7 @@ public:
     void gravity(int direction);
     void corrigeCollision();
 	void setAutoScroll(bool state);
-private:
+protected:
 	int m_life;
 	
 	sf::Texture m_texSprites; 

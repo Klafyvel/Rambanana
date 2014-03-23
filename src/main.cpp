@@ -28,7 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 void test(sf::RenderWindow &window)
 {
-	std::cout << "Coucou !" << std::endl;
+	std::cout << "Work in progress..." << std::endl;
 }
 
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 	Menu menu("Rambanana !");
 
 	menu.addItem(&game, "Jouer");
-	menu.addItem(&test, "Testeuuuu");
+	menu.addItem(&test, "Map][editor");
 	int choix = 0;
 	
 	while(window.isOpen() && choix >= 0)
