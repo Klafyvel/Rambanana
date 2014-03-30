@@ -124,7 +124,13 @@ void Personnage::move(int direction)
         if(m_state.jump && ((m_buffJump.v_y <= 0 && !Personnage::collision(HAUT))||(m_buffJump.v_y > 0 && !Personnage::collision(BAS))))
         {
 			if(m_buffJump.v_y == 0)
+			{
 				m_buffJump.v_y = m_buffJump.v_saut;
+				if(m_state.left)
+					Personnage::move(GAUCHE);
+				else
+					Personnage::move(DROITE);
+			}
 
 			m_buffJump.v_y += m_buffJump.v_gravitation;
 			m_hitbox.top += m_buffJump.v_y;
