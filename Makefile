@@ -23,11 +23,11 @@ EXEC_EDIT = $(EXEC_DIR)Editeur
 
 DEBUG = no
 RUNAPP = yes
-WINEX = no
+WINEX = yes
 
 ifeq ($(WINEX),no)
 LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system -lm
-INCLUDE = -I $(HOME)/SFML-2.1/include
+INCLUDE = -I $(HOME)/SFML-2.1/include -I include/
 ifeq ($(DEBUG),yes)
 	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(INCLUDE)
 else
@@ -35,7 +35,7 @@ else
 endif
 else
 LIB = -L $(HOME)/SFML-2.1-win/lib -lsfml-graphics -lsfml-window -lsfml-system -lm
-INCLUDE = -I $(HOME)/SFML-2.1-win/include
+INCLUDE = -I $(HOME)/SFML-2.1-win/include -I include/
 ifeq ($(DEBUG),yes)
 	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g $(INCLUDE)
 else
@@ -92,7 +92,7 @@ endif
 
 winarchive: clean
 	make RUNAPP=no WINEX=yes
-	zip -r $(NAME).zip bin/
+	zip -r $(NAME).zip ./bin ./font ./lvl ./sprites
 	
 
 main.o: src/personnage.h src/defines.h src/World.h src/game.h
@@ -101,7 +101,7 @@ World.o: src/World.h src/personnage.h
 personnage.o: src/personnage.h src/World.h
 menu.o: src/menu.h src/World.h
 mapeditor.o: src/mapeditor.h src/menu.h src/World.h src/defines.h
-cJSON.o: src/cJSON.c src/cJSON.h
+cJSON.o: include/cJSON.c include/cJSON.h
 ifeq ($(WINEX),yes)
 	$(WINCXX) -c $< -o $@ $(CXXFLAGS)
 else
@@ -120,4 +120,4 @@ clean:
 
 # mrproper
 mrproper: clean
-	rm -rf $(EXEC) bin
+	rm -rf $(EXEC) bin *.zip

@@ -29,6 +29,26 @@ $ make
 
 Par défaut, le programme sera lançé à la fin de la compilation et la compilation réalisée en mode release. Vous pouvez modifier ce comportement en modifiant les variables `DEBUG` et `RUNAPP`.
 
+Exécutable Windows
+------------------
+Le Makefile permet de générer un exécutable windows depuis GNU/Linux.
+Pour cela il vous faut la [version mingw](http://www.sfml-dev.org/download/sfml/2.1/index-fr.php) de la SFML. Décompressez-la dans `/home/votrenom/SFML-2.1-win` ou modifiez le Makefile. 
+
+Il vous faut également mingw. Sous Ubuntu :
+```console
+$ sudo apt-get install mingw32-runtime
+```
+Vous pouvez ensuite générer directement une archive ZIP contenant l'exécutable, les dll etc...
+```console
+$ make winarchive
+```
+
+Vous pouvez également générer uniquement l'exécutable (les dlls de SFML seront néanmoins copiées à côté de l'exécutable). Il faut pour cela mettre la variable `WINEX` du Makefile à "yes". Puis:
+```console
+$ make
+```
+Notez que si la variable `RUNAPP` est à "yes", le Makefile tentera de lancer l'exécutable avec wine.
+
 Dépendances
 -----------
 cJSON -> http://sourceforge.net/projects/cjson/ par Dave Gamble.
