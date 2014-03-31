@@ -146,7 +146,6 @@ int Personnage::collision(int direction)
 {
 	bool collision = false;
 	int borneH = 0;
-	int borneW = 0;
 	if(m_state.jump)
 		borneH = m_hitbox.height - m_buffJump.v_y;
 	else

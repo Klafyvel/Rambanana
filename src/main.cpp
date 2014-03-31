@@ -28,11 +28,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 void test(sf::RenderWindow &window)
 {
+	window.setSize(sf::Vector2u(20,20));
 	std::cout << "Work in progress..." << std::endl;
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
 
     //Window
@@ -53,5 +54,6 @@ int main(int argc, char* argv[])
 			menu.doFromActionNumber(choix, window);
 	}
 
+	window.~RenderWindow();
 	return 0;
 }

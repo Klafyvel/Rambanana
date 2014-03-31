@@ -48,7 +48,7 @@ void Menu::addSubMenu(Menu *subMenu, std::string label)
 
 void Menu::removeItemByLabel(std::string label)
 {
-	for(int i=0; i<m_items.size(); i++)
+	for(unsigned int i=0; i<m_items.size(); i++)
 	{
 		if(m_items[i].label == label)
 			Menu::removeItemByActionNumber(i);
@@ -57,7 +57,7 @@ void Menu::removeItemByLabel(std::string label)
 
 void Menu::removeItemByActionNumber(int action)
 {
-    if((action < 0)||(action >= m_items.size()))
+    if((action < 0)||(action >= (int)m_items.size()))
         return;
 	m_items.erase(m_items.begin() + action);
 }
@@ -70,9 +70,9 @@ unsigned int Menu::getTextHeight()
 unsigned int Menu::getMaxTextWidth()
 {
 	int largest = 0;
-	for(int i=0; i<m_items.size(); i++)
+	for(unsigned int i=0; i<m_items.size(); i++)
 	{
-		if(m_items[i].label.length() > largest)
+		if((int)m_items[i].label.length() > largest)
 			largest = m_items[i].label.size();
 	}
 	return largest * LABELSIZE * 1.25;
@@ -114,7 +114,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 	int yText = SPACEONTEXTTOP + TITLESIZE + INTERLIGNE;
  
-	for(int i=0; i<=m_items.size(); i++)
+	for(unsigned int i=0; i<=m_items.size(); i++)
 	{
 		sf::Text text;
 		text.setFont(itemFont);
@@ -163,7 +163,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 		window.clear(sf::Color::Black);
 
-		for(int i=0; i<rectItems.size(); i++)
+		for(unsigned int i=0; i<rectItems.size(); i++)
 		{
 			window.draw(textItems[i]);
 		}
@@ -171,7 +171,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 		window.display();
 
-		for(int i=0; i<rectItems.size(); i++)
+		for(unsigned int i=0; i<rectItems.size(); i++)
 		{
 			if(((x > rectItems[i].left) && (x < (rectItems[i].left + rectItems[i].width)))&&(y > rectItems[i].top && (y < (rectItems[i].top + rectItems[i].height))))
 			{
@@ -181,7 +181,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 			}
 		}
 	}
-	if(choix==(m_items.size())) // si on choisis de quitter le programme
+	if(choix==(int)m_items.size()) // si on choisis de quitter le programme
         return -1;
     else
        return choix;
@@ -189,7 +189,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 void Menu::doFromActionNumber(int action, sf::RenderWindow &window)
 {
-    if((action<0)||(action >= m_items.size()))
+    if((action<0)||(action >= (int)m_items.size()))
     {
         return ;
     }

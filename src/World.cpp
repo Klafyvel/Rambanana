@@ -91,9 +91,9 @@ World::World(std::string file,  sf::RenderWindow *window)
 void World::draw(sf::RenderWindow &window)
 {
 	window.draw(m_background);
-	for(int i=0; i<m_blocs.size(); i++)
+	for(unsigned int i=0; i<m_blocs.size(); i++)
 	{
-		for(int j=0; j<m_blocs[i].size(); j++)
+		for(unsigned int j=0; j<m_blocs[i].size(); j++)
 		{
 			window.draw(m_blocs[i][j].getSprite());
 		}
@@ -149,9 +149,9 @@ void World::getMap(std::vector <std::vector <int>> *receiver)
 }*/
 void World::updateBloc()
 {
-    for(int i=0; i<m_blocs.size(); i++)
+    for(unsigned int i=0; i<m_blocs.size(); i++)
     {
-        for(int j=0; j<m_blocs[i].size(); j++)
+        for(unsigned int j=0; j<m_blocs[i].size(); j++)
         {
             sf::Sprite sprite;
             sprite.setPosition(sf::Vector2f(j*BLOC,i*BLOC));

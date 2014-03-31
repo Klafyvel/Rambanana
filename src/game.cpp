@@ -19,8 +19,8 @@ void game(sf::RenderWindow &window)
 	Rambanana.setAutoScroll(true);
 	bool quit = false;
 
-while(window.isOpen() && !quit)
-{
+	while(window.isOpen() && !quit)
+	{
         bool moving = false;
         sf::Event event;
         while(window.pollEvent(event))
@@ -30,9 +30,6 @@ while(window.isOpen() && !quit)
                 case sf::Event::Closed:
                     window.close();
                     break;
-case sf::Event::MouseButtonPressed:
-std::cout << world.typeBloc(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)) << std::endl;
-break;
                 case sf::Event::KeyPressed:
                     switch(event.key.code)
                     {
@@ -82,7 +79,7 @@ break;
 
         window.clear(sf::Color::Black);
         world.draw(window);
-Rambanana.draw(window);
+		Rambanana.draw(window);
 
         window.display();
 

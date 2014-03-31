@@ -21,15 +21,15 @@ EXEC_DIR_EXIST :=`ls | grep bin | wc -l`
 EXEC = $(EXEC_DIR)$(NAME)
 EXEC_EDIT = $(EXEC_DIR)Editeur
 
-DEBUG = no
+DEBUG = yes
 RUNAPP = yes
-WINEX = yes
+WINEX = no
 
 ifeq ($(WINEX),no)
 LIB = -L $(HOME)/SFML-2.1/lib -lsfml-graphics -lsfml-window -lsfml-system -lm
 INCLUDE = -I $(HOME)/SFML-2.1/include -I include/
 ifeq ($(DEBUG),yes)
-	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g -std=c++11 $(INCLUDE)
+	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -Werror -Wfatal-errors -pedantic -g -std=c++11 $(INCLUDE)
 else
   CXXFLAGS = -std=c++11 $(INCLUDE)
 endif
@@ -37,7 +37,7 @@ else
 LIB = -L $(HOME)/SFML-2.1-win/lib -lsfml-graphics -lsfml-window -lsfml-system -lm
 INCLUDE = -I $(HOME)/SFML-2.1-win/include -I include/
 ifeq ($(DEBUG),yes)
-	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -g $(INCLUDE)
+	CXXFLAGS = -Wall -Wextra -Wunreachable-code -Wwrite-strings -Werror -Wfatal-errors -g $(INCLUDE)
 else
   CXXFLAGS = $(INCLUDE)
 endif
@@ -68,7 +68,7 @@ else
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
-	cd $(EXEC_DIR) && valgrind --track-origins=yes ./$(NAME)
+	cd $(EXEC_DIR) && valgrind --track-origins=yes --leak-check=full ./$(NAME)
 else
 	cd $(EXEC_DIR) && ./$(NAME)
 endif
