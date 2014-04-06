@@ -102,6 +102,10 @@ void Personnage::move(int direction)
     {
         m_state.run=true;
     }
+	else
+	{
+		m_state.run=false;
+	}
     if(direction & SAUTE)
     {
         m_state.jump=true;
@@ -126,13 +130,14 @@ void Personnage::move(int direction)
 			if(m_buffJump.v_y == 0)
 			{
 				m_buffJump.v_y = m_buffJump.v_saut;
-				if(m_state.left)
-					Personnage::move(GAUCHE);
-				else
-					Personnage::move(DROITE);
 			}
 
 			m_buffJump.v_y += m_buffJump.v_gravitation;
+			m_hitbox.top += m_buffJump.v_y;
+		}
+		else if(m_buffJump.v_y <= 0 && Personnage::collision(HAUT))
+		{
+			m_buffJump.v_y *= -1;
 			m_hitbox.top += m_buffJump.v_y;
 		}
     }
@@ -171,8 +176,8 @@ int Personnage::collision(int direction)
 		if (((m_world->typeBloc(sf::Vector2f(m_hitbox.left + PAS_DEPLACEMENT_X, m_hitbox.top)))|| m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width - PAS_DEPLACEMENT_X - 1, m_hitbox.top))))
 		{
 			collision = true;
-			m_buffJump.v_y = 0;
-			m_state.jump = false;
+			/*m_buffJump.v_y = 0;
+			m_state.jump = false;*/
 		}
 	}
     if((direction & BAS))

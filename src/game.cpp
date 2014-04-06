@@ -22,6 +22,23 @@ void game(sf::RenderWindow &window)
 	while(window.isOpen() && !quit)
 	{
         bool moving = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			Rambanana.move(COUR | GAUCHE);
+			moving = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			Rambanana.move(COUR | DROITE);
+			moving = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			Rambanana.move(SAUTE);
+			moving = true;
+		}
+
+	
         sf::Event event;
         while(window.pollEvent(event))
         {
@@ -33,36 +50,9 @@ void game(sf::RenderWindow &window)
                 case sf::Event::KeyPressed:
                     switch(event.key.code)
                     {
-                        case sf::Keyboard::A:
-                            view.zoom(0.5);
-                            window.setView(view);
-                            break;
-                        case sf::Keyboard::Z:
-                            view.zoom(2);
-                            window.setView(view);
-                            break;
-                        case sf::Keyboard::Q:
-                            view.move(sf::Vector2f(-5,0));
-                            window.setView(view);
-							break;
-                        case sf::Keyboard::Left:
-                            moving = true;
-							Rambanana.move(COUR | GAUCHE);
-                            break;
-                        case sf::Keyboard::S:
-                            view.move(sf::Vector2f(5,0));
-                            window.setView(view);
-							break;
-                        case sf::Keyboard::Right:
-                            moving = true;
-							Rambanana.move(COUR | DROITE);
-                            break;
 						case sf::Keyboard::E:
 							quit = true;
 							break;
-						case sf::Keyboard::Space:
-							moving = true;
-							Rambanana.move(SAUTE);
                         default:
                             break;
                     }
