@@ -1,11 +1,9 @@
 //Doit être modifié pour SFML [28/02/2014]
-/*
+
 #include <iostream>
 
-#include <SDL2/SDL.h>
 
 #include "World.h"
-#include "SDLFunc.h"
 #include "defines.h"
 #include "menu.h"
 
@@ -13,57 +11,37 @@
 
 
 
-int main(int argc, char* argv[])
+void mapeditor(sf::RenderWindow &window)
 {
-	lvl world;
- 
-	Menu menu;
-	Menu_new(&menu, "Préparation de la map");
+   //Window
+    window.create(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
+	window.setFramerateLimit(30);
 
-	Item itemCreate;
-	Item itemLoad;
-	Item itemSize;
-	Item itemBack;
-	Item itemEdit;
-	Item itemWrite;
+    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
 
-	
-	Menu_newItem(&itemCreate, create, "Créer une map");
-	Menu_newItem(&itemLoad, load, "Charger une map");
-	Menu_newItem(&itemSize, setSize, "Changer la taille de la map");
-	Menu_newItem(&itemBack, setBack, "Modifier le fond");
-	Menu_newItem(&itemEdit, edit, "Editer la map");
-	Menu_newItem(&itemWrite, write, "Sauvegarder la map");
+    window.setView(view);
 
-	Menu_addItem(&menu, &itemCreate);
-	Menu_addItem(&menu, &itemLoad);
-	Menu_addItem(&menu, &itemSize);
-	Menu_addItem(&menu, &itemBack);
-	Menu_addItem(&menu, &itemEdit);
-	Menu_addItem(&menu, &itemWrite);
+	Menu menu("Map Editor");
 
-    while(1)
-    {
-        int action = Menu_choose(&menu);
+	menu.addItem(&create, "Nouveau][niveau");
+	menu.addItem(&load, "Charger][niveau");
+	menu.addItem(&setBack, "Changer][fond");
+	menu.addItem(&edit, "Editer][niveau");
+	menu.addItem(&write, "Enregistrer");
+	int choix = 0;
 
-        if(action == -1)
-        {
-            break;
-        }
-        else
-        {
-            if(!Menu_do(&menu, action, &world))
-            {
-                printf("Erreur lors du lancement d'une action.\n");
-            }
-        }
-    }
+	while(window.isOpen() && choix >= 0)
+	{
+		choix = menu.chooseAnActionNumber(window);
+		if(choix >= 0)
+			menu.doFromActionNumber(choix, window);
+	}
 
-    return 0;
 }
 
-void create(lvl* world)
+void create(sf::RenderWindow &window)
 {
+    /*
 	std::string chemin;
 	std::cout << "Chemin actuel :" << world->chemin << std::endl;
 	std::cout << "Indiquez le chemin (relatif) du fichier: ";
@@ -71,10 +49,11 @@ void create(lvl* world)
 	world->chemin = chemin;
 	(*world).background = chemin;
 	(*world).h=0;
-	(*world).w=0;
+	(*world).w=0;*/
 }
-void load(lvl* world)
+void load(sf::RenderWindow &window)
 {
+    /*
 	std::string chemin;
 	std::cout << "Chemin actuel :" << world->chemin << std::endl;
 	std::cout << "Indiquez le chemin (relatif) du fichier: ";
@@ -86,7 +65,7 @@ void load(lvl* world)
 	std::ifstream fic(chemin, std::ios::in);
 	if(!fic)
 		return;
-	
+
 	fic >> world->background >> world->w >> world->h;
 
 	fic.get(c);
@@ -125,7 +104,7 @@ void load(lvl* world)
 					break;
 				default:
 					isEndl = true;
-					break; 
+					break;
 			}
 			if(!isEndl)
 				v.push_back(foo);
@@ -134,15 +113,15 @@ void load(lvl* world)
 				isEndl = false;
 			}
 		}
-		while(c!='\n')	
+		while(c!='\n')
 			fic.get(c);
 		world->blocs.push_back(v);
 	}
-	fic.close();
+	fic.close();*/
 }
-void edit(lvl* world)
+void edit(sf::RenderWindow &window)
 {
-
+/*
 	if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		return;
 	SDL_Window *fen = SDL_CreateWindow("Editor", 0, 0, TAILLE_X, TAILLE_Y, SDL_WINDOW_SHOWN);
@@ -151,7 +130,7 @@ void edit(lvl* world)
 	SDL_Renderer *renderer = SDL_CreateRenderer(fen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if(renderer == nullptr)
 		return;
-	
+
 	World map(world->chemin, renderer);
 
 	SDL_Event e;
@@ -195,8 +174,9 @@ void edit(lvl* world)
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(fen);
-	SDL_Quit();
+	SDL_Quit();*/
 }
+/*
 void setSize(lvl* world)
 {
 	std::cout << "Taille actuelle :" << world->w << "x" << world->h << std::endl;
@@ -232,15 +212,17 @@ void setSize(lvl* world)
 			world->blocs.pop_back();
 		}
 	}
-}
-void setBack(lvl* world)
+}*/
+void setBack(sf::RenderWindow &window)
 {
+    /*
 	std::cout << "Chemin actuel :" << world->background << std::endl;
 	std::cout << "Indiquez le chemin (relatif) du background: ";
-	std::cin >> world->background;
+	std::cin >> world->background;*/
 }
-void write(lvl* world)
+void write(sf::RenderWindow &window)
 {
+    /*
 	std::ofstream fic(world->chemin, std::ios::out | std::ios::trunc);
 	if(!fic)
 		return;
@@ -256,4 +238,5 @@ void write(lvl* world)
 		fic << std::endl;
 	}
 	fic.close();
-}*/
+	*/
+}

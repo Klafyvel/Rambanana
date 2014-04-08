@@ -5,7 +5,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 {
 	m_autoScroll = false;
 
-    m_world = world; 
+    m_world = world;
     m_life = 100;
 
 	m_hitbox.left = position.x + (TAILLE_PERSO_AFFICHE_X - hitboxWidth)/2;
@@ -23,12 +23,12 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
     m_sprite.setTexture(m_texSprites);
 	m_sprite.setScale(AGRANDISSEMENT_PERSO, AGRANDISSEMENT_PERSO);
 	m_sprite.setOrigin(sf::Vector2f(0,0));
- 
+
 	m_state.jump=false;
 	m_state.run=false;
 	m_state.left=false;
 
- 
+
 	m_coupe.left = 0;
 	m_coupe.top = 0;
 	m_coupe.width = TAILLE_PERSO_X;
@@ -48,7 +48,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 
 }
 void Personnage::draw(sf::RenderWindow &window)
-{ 
+{
     if(m_state.jump)
 	    m_coupe.top = RANG_SAUT * TAILLE_PERSO_Y;
     else if(m_state.run)
@@ -76,13 +76,13 @@ void Personnage::draw(sf::RenderWindow &window)
 	{
 		sf::Vector2i pos1 = window.mapCoordsToPixel(sf::Vector2f(m_hitbox.left, m_hitbox.top));
 		sf::Vector2i pos2 = window.mapCoordsToPixel(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height));
-		if(pos1.x<(TAILLE_X - SCROLL_BOX_W)/2)
+		if(pos1.x<(window.getSize().x - SCROLL_BOX_W)/2)
 			m_world->scroll(GAUCHE);
-		else if(pos2.x >(TAILLE_X + SCROLL_BOX_W)/2)
+		else if(pos2.x >(window.getSize().x + SCROLL_BOX_W)/2)
 			m_world->scroll(DROITE);
-		if(pos1.y <(TAILLE_Y - SCROLL_BOX_H)/2)
+		if(pos1.y <(window.getSize().y - SCROLL_BOX_H)/2)
 			m_world->scroll(HAUT);
-		else if(pos2.y > (TAILLE_Y + SCROLL_BOX_H)/2)
+		else if(pos2.y > (window.getSize().y + SCROLL_BOX_H)/2)
 			m_world->scroll(BAS);
 	}
 }
@@ -195,8 +195,11 @@ int Personnage::collision(int direction)
 }
 void Personnage::gravity(int direction)
 {
-    if(!Personnage::collision(direction) && !m_state.jump)
-        Personnage::move(direction);
+    if(!Personnage::collision(BAS) && !m_state.jump)
+    {
+        m_buffJump.v_y=m_buffJump.v_gravitation;
+        m_state.jump=true;
+    }
 }
 void Personnage::corrigeCollision()
 {

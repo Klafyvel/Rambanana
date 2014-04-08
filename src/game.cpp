@@ -1,10 +1,10 @@
 #include "game.h"
 void game(sf::RenderWindow &window)
 {
-	window.setSize(sf::Vector2u(TAILLE_X, TAILLE_Y));
+	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
 	window.setFramerateLimit(30);
-	
-    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
+
+    sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 
     window.setView(view);
 
@@ -38,7 +38,7 @@ void game(sf::RenderWindow &window)
 			moving = true;
 		}
 
-	
+
         sf::Event event;
         while(window.pollEvent(event))
         {

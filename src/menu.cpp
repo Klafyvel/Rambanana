@@ -86,8 +86,8 @@ sf::Vector2u Menu::getTextSize()
 
 int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 {
-	window.setSize(Menu::getTextSize());
-	sf::View view(sf::Vector2f(Menu::getMaxTextWidth()/2,Menu::getTextHeight()/2), sf::Vector2f(Menu::getTextSize()));
+	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
+	sf::View view(sf::Vector2f(window.getSize().x/2,window.getSize().y/2), sf::Vector2f(window.getSize()));
 	window.setView(view);
 
 
@@ -113,7 +113,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 	std::vector <sf::IntRect> rectItems;
 
 	int yText = SPACEONTEXTTOP + TITLESIZE + INTERLIGNE;
- 
+
 	for(unsigned int i=0; i<=m_items.size(); i++)
 	{
 		sf::Text text;
@@ -130,7 +130,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 
 		str.insert(0, "[");
 		str.append("]");
-	
+
 		text.setString(str);
 
 		textItems.push_back(text);

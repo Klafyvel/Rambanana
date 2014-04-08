@@ -52,7 +52,7 @@ all: exec_dir
 exec_dir: mrproper
 	mkdir bin
 
-game: main.o game.o personnage.o World.o cJSON.o menu.o
+game: main.o game.o personnage.o World.o cJSON.o menu.o mapeditor.o
 ifeq ($(WINEX),yes)
 	$(WINCXX) $^ -o $(EXEC).exe $(CXXFLAGS) $(LIB)
 	@cp $(HOME)/SFML-2.1-win/bin/sfml-graphics-2.dll bin/
@@ -95,7 +95,7 @@ winarchive: clean
 	zip -r $(NAME).zip ./bin ./font ./lvl ./sprites
 	
 
-main.o: src/personnage.h src/defines.h src/World.h src/game.h
+main.o: src/personnage.h src/defines.h src/World.h src/game.h src/mapeditor.h
 game.o: src/game.h src/defines.h src/World.h src/personnage.h
 World.o: src/World.h src/personnage.h
 personnage.o: src/personnage.h src/World.h

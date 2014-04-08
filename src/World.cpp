@@ -103,16 +103,19 @@ void World::draw(sf::RenderWindow &window)
 void World::scroll(int direction)
 {
 	sf::View view = m_window->getView();
-
+	sf::Vector2f mv;
 	if(direction & GAUCHE)
-		view.move(-1.1 * PAS_DEPLACEMENT_X, 0);
+		mv = sf::Vector2f(-1.1 * PAS_DEPLACEMENT_X, 0);
 	if(direction & DROITE)
-		view.move(1.1 * PAS_DEPLACEMENT_X, 0);
+		mv = sf::Vector2f(1.1 * PAS_DEPLACEMENT_X, 0);
 	if(direction & HAUT)
-		view.move(0, -1.1 *  PAS_DEPLACEMENT_Y);
+		mv = sf::Vector2f(0, -1.1 *  PAS_DEPLACEMENT_Y);
 	if(direction & BAS)
-		view.move(0,1.1 * PAS_DEPLACEMENT_Y);
+		mv = sf::Vector2f(0,1.1 * PAS_DEPLACEMENT_Y);
+	view.move(mv.x, mv.y);
 	m_window->setView(view);
+	
+	m_background.move(mv);
 }
 int World::typeBloc(sf::Vector2f pos)
 {

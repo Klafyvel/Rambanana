@@ -25,6 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "personnage.h"
 #include "game.h"
 #include "menu.h"
+#include "mapeditor.h"
 
 void test(sf::RenderWindow &window)
 {
@@ -37,16 +38,16 @@ int main()
 {
 
     //Window
-    sf::RenderWindow window(sf::VideoMode(TAILLE_X, TAILLE_Y), "Rambanana !");
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
 
 	window.setVerticalSyncEnabled(true);
 
 	Menu menu("Rambanana !");
 
 	menu.addItem(&game, "Jouer");
-	menu.addItem(&test, "Map][editor");
+	menu.addItem(&mapeditor, "Map][editor");
 	int choix = 0;
-	
+
 	while(window.isOpen() && choix >= 0)
 	{
 		choix = menu.chooseAnActionNumber(window);
