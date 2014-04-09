@@ -6,6 +6,7 @@
 #include "World.h"
 #include "defines.h"
 #include "menu.h"
+#include "SFML_io.h"
 
 #include "mapeditor.h"
 
