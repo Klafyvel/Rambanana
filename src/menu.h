@@ -31,8 +31,8 @@
 #define SPACEONTEXTBOTTOM 50
 
 #define TITLESIZE 150
-#define LABELSIZE 75
-#define INTERLIGNE 50
+#define LABELSIZE 50
+#define INTERLIGNE 40
 
 typedef void (*callback)(sf::RenderWindow &window);
 
