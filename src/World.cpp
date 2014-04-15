@@ -33,14 +33,11 @@ sf::Sprite &Bloc::getSprite()
 {
     return m_sprite;
 }
-/*World::World(const World &world) 
+World::World()
 {
-    m_debutAffichage = world.m_debutAffichage;
-    m_blocs = world.m_blocs;
-    m_background = world.m_background;
-    m_texBlocs = world.m_texBlocs;
-}*/
-    
+	m_initialized = false;
+}
+
 World::World(std::string file,  sf::RenderWindow *window)
 {
 	m_initialized = false;
@@ -88,14 +85,14 @@ World::World(std::string file,  sf::RenderWindow *window)
 
 	m_initialized = true;
 }
-void World::draw(sf::RenderWindow &window)
+void World::draw()
 {
-	window.draw(m_background);
+	m_window->draw(m_background);
 	for(unsigned int i=0; i<m_blocs.size(); i++)
 	{
 		for(unsigned int j=0; j<m_blocs[i].size(); j++)
 		{
-			window.draw(m_blocs[i][j].getSprite());
+			m_window->draw(m_blocs[i][j].getSprite());
 		}
 	}
 }
@@ -114,42 +111,40 @@ void World::scroll(int direction)
 		mv = sf::Vector2f(0,1.1 * PAS_DEPLACEMENT_Y);
 	view.move(mv.x, mv.y);
 	m_window->setView(view);
-	
+
 	m_background.move(mv);
 }
 int World::typeBloc(sf::Vector2f pos)
 {
 	return (m_blocs[pos.y/BLOC][(pos.x-m_debutAffichage)/BLOC].getRect().left) / BLOC;
 }
-/*
-void World::upgradeBloc(int x, int y)
+
+void World::upgradeBloc(sf::Vector2f pos)
 {
-	if(this->typeBloc(x, y) == 6)
-	{
-		m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x = 0;
-	}
+    if(World::typeBloc(pos) == NB_BLOC)
+        World::eraseBloc(pos);
 	else
-	{
-		m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x += 26;
-	}
+    {
+        sf::IntRect rect = m_blocs[pos.y/BLOC][pos.x/BLOC].getRect();
+        rect.left += BLOC;
+		m_blocs[pos.y/BLOC][pos.x/BLOC].setRect(rect);
+    }
 }
-void World::eraseBloc(int x, int y)
+void World::eraseBloc(sf::Vector2f pos)
 {
-	m_blocs[y/BLOC][(x-m_debutAffichage)/BLOC].x = 0;
+    sf::IntRect rect = m_blocs[pos.y/BLOC][pos.x/BLOC].getRect();
+    rect.left = 0;
+    m_blocs[pos.y/BLOC][pos.x/BLOC].setRect(rect);
 }
-void World::getMap(std::vector <std::vector <int>> *receiver)
+
+void World::getJSONMap()
 {
-	receiver->resize(m_blocs.size());
-	for(int i=0; i<receiver->size(); i++)
-		(*receiver)[i].resize(m_blocs[i].size());
-	for(int i=0; i<m_blocs.size(); i++)
-	{
-		for(int j=0; j<m_blocs[i].size(); j++)
-		{
-			(*receiver)[i][j] = m_blocs[i][j].x / BLOC;
-		}
-	}
-}*/
+    cJSON* root;
+    root = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "background", cJSON_CreateString(m_cheminBackground.c_str()));
+    cJSON_AddItemToObject(root, "block_text", cJSON_CreateString(m_cheminTexBlocs.c_str()));
+    /* TODO: finish the register */
+}
 void World::updateBloc()
 {
     for(unsigned int i=0; i<m_blocs.size(); i++)
@@ -185,7 +180,7 @@ void World::parseJSON(std::string json)
 	m_lvlName = cJSON_GetObjectItem(root, "name")->valuestring;
 	m_cheminBackground = cJSON_GetObjectItem(root, "background")->valuestring;
 	m_cheminTexBlocs = cJSON_GetObjectItem(root, "block_text")->valuestring;
-	
+
 	cJSON * h = cJSON_GetObjectItem(root, "blocks");
 	for(int i=0; i<cJSON_GetArraySize(h); i++)
 	{
@@ -205,4 +200,50 @@ void World::parseJSON(std::string json)
 
 	m_posInitPers = sf::Vector2f(cJSON_GetObjectItem(cJSON_GetObjectItem(root, "character"), "init_left")->valueint * BLOC,
 								 cJSON_GetObjectItem(cJSON_GetObjectItem(root, "character"), "init_top")->valueint * BLOC);
+}
+
+std::string World::getAFileName(sf::RenderWindow &window)
+{
+	std::string returned;
+
+    window.create(sf::VideoMode::getDesktopMode(), "Rambanana !" );
+	window.setFramerateLimit(30);
+
+    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
+
+    window.setView(view);
+
+	Menu menu("Sélectionnez un fichier");
+
+	DIR* dir = nullptr;
+	dir = opendir("../lvl");
+	if(dir == nullptr)
+		perror("");
+	else
+	{
+		std::vector <std::string> files;
+		struct dirent* file = nullptr;
+
+
+		while((file=readdir(dir)) != nullptr)
+		{
+				menu.addItem(nullptr, file->d_name);
+				files.push_back(file->d_name);
+				std::cout << file->d_name << std::endl;
+		}
+		closedir(dir);
+		int choose = menu.chooseAnActionNumber(window);
+		if(choose > 0)
+			returned = files[choose];
+	}
+	return "../lvl/" + returned;
+}
+void World::setBlocType(sf::Vector2f pos, int type)
+{
+	if(type <= NB_BLOC)
+	{
+		sf::IntRect rect = m_blocs[pos.y/BLOC][pos.x/BLOC].getRect();
+		rect.left = type * BLOC;
+		m_blocs[pos.y/BLOC][pos.x/BLOC].setRect(rect);
+	}
 }

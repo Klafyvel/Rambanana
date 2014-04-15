@@ -38,7 +38,7 @@ int main()
 {
 
     //Window
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Rambanana !" );
 
 	window.setVerticalSyncEnabled(true);
 
@@ -48,11 +48,13 @@ int main()
 	menu.addItem(&mapeditor, "Map][editor");
 	int choix = 0;
 
+	World world;
+
 	while(window.isOpen() && choix >= 0)
 	{
 		choix = menu.chooseAnActionNumber(window);
 		if(choix >= 0)
-			menu.doFromActionNumber(choix, window);
+			menu.doFromActionNumber(choix, window, world);
 	}
 
 	window.~RenderWindow();

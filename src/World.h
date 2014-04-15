@@ -22,11 +22,20 @@
 #include <string>
 #include <vector>
 
+#include <errno.h>
+
+#include <dirent.h>
+
+#ifndef WIN32
+	#include <sys/types.h>
+#endif
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
 #include "cJSON.h"
 
+#include "menu.h"
 #include "personnage.h"
 
 class Bloc
@@ -47,18 +56,21 @@ class World
 {
 public:
 	World(std::string file, sf::RenderWindow *window);
-    //World(const World &world);
+	World();
 	int typeBloc(sf::Vector2f pos);
-    void draw(sf::RenderWindow &window);
+    void draw();
 	void scroll(int direction);
 	void upgradeBloc(sf::Vector2f pos);
 	void eraseBloc(sf::Vector2f pos);
-	void getMap(std::vector <std::vector <int> > *receiver);
+	void setBlocType(sf::Vector2f pos, int type); 
+	void getJSONMap();
     sf::Vector2f getCharacterPos();
     void updateBloc();
 	bool initialized();
 	void parseJSON(std::string json);
- 
+
+	static std::string getAFileName(sf::RenderWindow &window);
+
 private:
 	bool m_initialized;
  	int m_debutAffichage;
@@ -72,4 +84,5 @@ private:
 	std::string m_cheminTexBlocs;
 	sf::RenderWindow *m_window;
 };
+
 #endif

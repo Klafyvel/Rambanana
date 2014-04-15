@@ -8,6 +8,8 @@
 #include "World.h"
 
 #include "menu.h"
+class World;
+
 
 typedef struct lvl lvl;
 struct lvl
@@ -18,12 +20,14 @@ struct lvl
 	int w;
 	std::vector <std::vector <int> > blocs;
 };
-void mapeditor(sf::RenderWindow &window);
-void create(sf::RenderWindow &window);
-void load(sf::RenderWindow &window);
-void edit(sf::RenderWindow &window);
-void setBack(sf::RenderWindow &window);
+void mapeditor(sf::RenderWindow &window, World& world);
 
-void write(sf::RenderWindow &window);
+void mainloop(sf::RenderWindow &window, World& world);
+void create(sf::RenderWindow &window, World& world);
+void load(sf::RenderWindow &window, World& world);
+void edit(sf::RenderWindow &window, World& world);
+void setBack(sf::RenderWindow &window, World& world);
+void write(sf::RenderWindow &window, World& world);
+
 
 #endif
