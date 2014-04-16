@@ -23,6 +23,7 @@
 #include <SFML/System.hpp>
 
 #include "color.h"
+#include "World.h"
 
 #include "mapeditor.h"
 
@@ -34,13 +35,15 @@
 #define LABELSIZE 50
 #define INTERLIGNE 40
 
-typedef void (*callback)(sf::RenderWindow &window);
+class World;
+
+typedef void (*callback)(sf::RenderWindow &window, World& world);
 
 class Menu;
 
 struct Item {
 	Item();
-	Menu* subMenu; 
+	Menu* subMenu;
 	callback function;
 	std::string label;
 };
@@ -53,12 +56,15 @@ public:
 	void addSubMenu(Menu *subMenu, std::string label);
 	void removeItemByLabel(std::string label);
 	void removeItemByActionNumber(int action);
-	void doFromActionNumber(int action, sf::RenderWindow &window);
+	void doFromActionNumber(int action, sf::RenderWindow &window, World& world);
 	int chooseAnActionNumber(sf::RenderWindow &window);
 	sf::Vector2u getTextSize();
 	unsigned int getMaxTextWidth();
 	unsigned int getTextHeight();
+	void setQuitOption(bool state);
+	unsigned int getNumberItemOnPage();
 private:
+	bool m_quitOption;
     std::vector <struct Item> m_items;
     std::string m_title;
 	/*bool isASubMenu;*/

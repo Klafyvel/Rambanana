@@ -68,7 +68,7 @@ else
 	$(CXX) $^ -o $(EXEC) $(CXXFLAGS) $(LIB)
 ifeq ($(RUNAPP),yes)
 ifeq ($(DEBUG),yes)
-	cd $(EXEC_DIR) && valgrind --track-origins=yes --leak-check=full ./$(NAME)
+	cd $(EXEC_DIR) && valgrind ./$(NAME) #--track-origins=yes --leak-check=full ./$(NAME)
 else
 	cd $(EXEC_DIR) && ./$(NAME)
 endif

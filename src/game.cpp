@@ -1,14 +1,14 @@
 #include "game.h"
-void game(sf::RenderWindow &window)
+void game(sf::RenderWindow &window, World& world)
 {
-	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
+	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !" );
 	window.setFramerateLimit(30);
 
     sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 
     window.setView(view);
 
-	World world("../lvl/1.lvl", &window);
+	world.create(World::getAFileName(window), &window);
 	if(!world.initialized())
 	{
 		std::cerr << "Erreur lors de la création de l'objet World" << std::endl;
@@ -53,6 +53,10 @@ void game(sf::RenderWindow &window)
 						case sf::Keyboard::E:
 							quit = true;
 							break;
+						case sf::Keyboard::A:
+							view.zoom(-0.75f);
+							window.setView(view);
+							break;
                         default:
                             break;
                     }
@@ -65,10 +69,10 @@ void game(sf::RenderWindow &window)
         {
             Rambanana.move(IMMOBILE);
         }
-        Rambanana.gravity(BAS);
+        Rambanana.gravity();
 
         window.clear(sf::Color::Black);
-        world.draw(window);
+        world.draw();
 		Rambanana.draw(window);
 
         window.display();

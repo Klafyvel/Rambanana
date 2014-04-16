@@ -86,7 +86,7 @@ sf::Vector2u Menu::getTextSize()
 
 int Menu::chooseAnActionNumber(sf::RenderWindow &window)
 {
-	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !", sf::Style::Fullscreen);
+	window.create(sf::VideoMode::getDesktopMode(), "Rambanana !" );
 	sf::View view(sf::Vector2f(window.getSize().x/2,window.getSize().y/2), sf::Vector2f(window.getSize()));
 	window.setView(view);
 
@@ -187,7 +187,7 @@ int Menu::chooseAnActionNumber(sf::RenderWindow &window)
        return choix;
 }
 
-void Menu::doFromActionNumber(int action, sf::RenderWindow &window)
+void Menu::doFromActionNumber(int action, sf::RenderWindow &window, World& world)
 {
     if((action<0)||(action >= (int)m_items.size()))
     {
@@ -199,11 +199,15 @@ void Menu::doFromActionNumber(int action, sf::RenderWindow &window)
 		if(m_items[action].function)
 		{
 			function = m_items[action].function;
-	        function(window);
+	        function(window, world);
 	    }
 	    else if(m_items[action].subMenu)
 	    {
-	        m_items[action].subMenu->doFromActionNumber(m_items[action].subMenu->chooseAnActionNumber(window), window);
+	        m_items[action].subMenu->doFromActionNumber(m_items[action].subMenu->chooseAnActionNumber(window), window, world);
 	    }
     }
+}
+void Menu::setQuitOption(bool state)
+{
+	m_quitOption = state;
 }

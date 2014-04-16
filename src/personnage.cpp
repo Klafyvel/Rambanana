@@ -193,7 +193,7 @@ int Personnage::collision(int direction)
 		return 1;
 	return 0;
 }
-void Personnage::gravity(int direction)
+void Personnage::gravity()
 {
     if(!Personnage::collision(BAS) && !m_state.jump)
     {

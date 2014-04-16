@@ -10,6 +10,6 @@
 #include "defines.h"
 #include "personnage.h"
 #include "menu.h"
-
-void game(sf::RenderWindow &window);
+class World;
+void game(sf::RenderWindow &window, World& world);
 #endif

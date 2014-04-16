@@ -34,7 +34,7 @@ public:
 	void draw(sf::RenderWindow &window);
 	void move(int direction);
     int collision(int direction);
-    void gravity(int direction);
+    void gravity();
 	void setAutoScroll(bool state);
 protected:
 	int m_life;
