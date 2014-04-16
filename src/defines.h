@@ -36,7 +36,7 @@
 #define BAS 64
 
 #define PAS_DEPLACEMENT_X 5
-#define PAS_DEPLACEMENT_Y 5
+#define PAS_DEPLACEMENT_Y 8
 
 #define ENERGIE_SAUT 10000
 

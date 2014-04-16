@@ -35,7 +35,6 @@ public:
 	void move(int direction);
     int collision(int direction);
     void gravity(int direction);
-    void corrigeCollision();
 	void setAutoScroll(bool state);
 protected:
 	int m_life;

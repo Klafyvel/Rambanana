@@ -44,7 +44,7 @@ Personnage::Personnage(sf::Vector2f position, int hitboxWidth, int hitboxHeight,
 
 	m_buffJump.v_y = 0;
 	m_buffJump.v_saut = -PAS_DEPLACEMENT_Y;
-	m_buffJump.v_gravitation = 0.2;
+	m_buffJump.v_gravitation = 0.4;
 
 }
 void Personnage::draw(sf::RenderWindow &window)
@@ -201,22 +201,6 @@ void Personnage::gravity(int direction)
         m_state.jump=true;
     }
 }
-void Personnage::corrigeCollision()
-{
-    if(!(m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top)) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top)) || m_world->typeBloc(sf::Vector2f(m_hitbox.left, m_hitbox.top + m_hitbox.height -1)) || m_world->typeBloc(sf::Vector2f(m_hitbox.left + m_hitbox.width, m_hitbox.top + m_hitbox.height -1))))
-            return;
-
-/*
-    if((direction & GAUCHE) && ((m_world->typeBloc(m_rectAffichage.x - PAS_DEPLACEMENT_X, m_rectAffichage.y))||m_world->typeBloc(m_rectAffichage.x - PAS_DEPLACEMENT_X, m_rectAffichage.y + m_rectAffichage.h - 1)))
-        return 1;
-    if((direction & DROITE) && m_world->typeBloc(m_rectAffichage.x + m_rectAffichage.w + PAS_DEPLACEMENT_X, m_rectAffichage.y))
-        return 1;
-    if((direction & HAUT) && m_world->typeBloc(m_rectAffichage.x, m_rectAffichage.y - PAS_DEPLACEMENT_Y))
-        return 1;
-    if((direction & BAS) && m_world->typeBloc(m_rectAffichage.x, m_rectAffichage.y + m_rectAffichage.h +PAS_DEPLACEMENT_Y - 1))
-        return 1;
-    return 0;
-*/}//to be modified
 void Personnage::setAutoScroll(bool state)
 {
 	m_autoScroll = state;

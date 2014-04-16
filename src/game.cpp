@@ -27,7 +27,7 @@ void game(sf::RenderWindow &window)
 			Rambanana.move(COUR | GAUCHE);
 			moving = true;
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
 			Rambanana.move(COUR | DROITE);
 			moving = true;
