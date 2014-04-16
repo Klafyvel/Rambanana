@@ -57,17 +57,20 @@ class World
 public:
 	World(std::string file, sf::RenderWindow *window);
 	World();
+	void create(std::string file, sf::RenderWindow *window);
 	int typeBloc(sf::Vector2f pos);
     void draw();
 	void scroll(int direction);
 	void upgradeBloc(sf::Vector2f pos);
 	void eraseBloc(sf::Vector2f pos);
 	void setBlocType(sf::Vector2f pos, int type); 
-	void getJSONMap();
+	std::string getJSONMap();
     sf::Vector2f getCharacterPos();
     void updateBloc();
 	bool initialized();
 	void parseJSON(std::string json);
+	std::string getFileName();
+	void setCharPos(sf::Vector2f pos);
 
 	static std::string getAFileName(sf::RenderWindow &window);
 
@@ -83,6 +86,7 @@ private:
 	std::string m_cheminBackground;
 	std::string m_cheminTexBlocs;
 	sf::RenderWindow *m_window;
+	std::string m_lvlPath;
 };
 
 #endif

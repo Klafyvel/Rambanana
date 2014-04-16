@@ -8,14 +8,14 @@ void game(sf::RenderWindow &window, World& world)
 
     window.setView(view);
 
-	World map(World::getAFileName(window), &window);
-	if(!map.initialized())
+	world.create(World::getAFileName(window), &window);
+	if(!world.initialized())
 	{
 		std::cerr << "Erreur lors de la création de l'objet World" << std::endl;
 		return ;
 	}
 
-    Personnage Rambanana(map.getCharacterPos(), TAILLE_HITBOX_PERSO_X, TAILLE_HITBOX_PERSO_Y, "../sprites/SpritesRambanana.bmp", &map);
+    Personnage Rambanana(world.getCharacterPos(), TAILLE_HITBOX_PERSO_X, TAILLE_HITBOX_PERSO_Y, "../sprites/SpritesRambanana.bmp", &world);
 	Rambanana.setAutoScroll(true);
 	bool quit = false;
 
@@ -53,6 +53,10 @@ void game(sf::RenderWindow &window, World& world)
 						case sf::Keyboard::E:
 							quit = true;
 							break;
+						case sf::Keyboard::A:
+							view.zoom(-0.75f);
+							window.setView(view);
+							break;
                         default:
                             break;
                     }
@@ -65,10 +69,10 @@ void game(sf::RenderWindow &window, World& world)
         {
             Rambanana.move(IMMOBILE);
         }
-        Rambanana.gravity(BAS);
+        Rambanana.gravity();
 
         window.clear(sf::Color::Black);
-        map.draw();
+        world.draw();
 		Rambanana.draw(window);
 
         window.display();

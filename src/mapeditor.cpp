@@ -45,7 +45,8 @@ void mainloop(sf::RenderWindow &window, World& world)
 
 void create(sf::RenderWindow &window, World& world)
 {
-
+	window.display();
+	world.draw();
 }
 void load(sf::RenderWindow &window, World& world)
 {
@@ -55,14 +56,14 @@ void load(sf::RenderWindow &window, World& world)
     sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
 
     window.setView(view);
-	world = World(World::getAFileName(window), &window);
+	world.create(World::getAFileName(window), &window);
 }
 void edit(sf::RenderWindow &window, World& world)
 {
     window.create(sf::VideoMode::getDesktopMode(), "Rambanana !" );
 	window.setFramerateLimit(30);
 
-    sf::View view(sf::FloatRect(0, 0, TAILLE_X, TAILLE_Y));
+    sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 
     window.setView(view);
 	if(!world.initialized())
@@ -72,6 +73,7 @@ void edit(sf::RenderWindow &window, World& world)
     }
 
 	int typeBloc = 1;
+	bool placingCharacter = false;
 
 	bool quit = false;
 	while(!quit && window.isOpen())
@@ -90,6 +92,9 @@ void edit(sf::RenderWindow &window, World& world)
 					{
 						case sf::Keyboard::E:
 							quit=true;
+							break;
+						case sf::Keyboard::P:
+							placingCharacter = true;
 							break;
 						case sf::Keyboard::Left:
 							world.scroll(GAUCHE);
@@ -131,7 +136,15 @@ void edit(sf::RenderWindow &window, World& world)
 
 			}
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				world.setBlocType(window.mapPixelToCoords(sf::Mouse::getPosition(window)), typeBloc);
+			{
+				if(placingCharacter)
+				{
+					world.setCharPos(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+					placingCharacter=false;
+				}
+				else
+					world.setBlocType(window.mapPixelToCoords(sf::Mouse::getPosition(window)), typeBloc);
+			}
 			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
 				world.eraseBloc(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 		}
@@ -146,7 +159,19 @@ void edit(sf::RenderWindow &window, World& world)
 
 void setBack(sf::RenderWindow &window, World& world)
 {
+	window.display();
+	world.draw();
 }
 void write(sf::RenderWindow &window, World& world)
 {
+	window.display();
+	std::ofstream lvlFile(world.getFileName(), std::ios::out | std::ios::trunc);
+	if(!lvlFile)
+	{
+		std::cerr << "Impossible d'ouvrir " << world.getFileName() << std::endl;
+		return;
+	}
+	std::cout << world.getJSONMap() << std::endl;
+	lvlFile << world.getJSONMap();
+	lvlFile.close();
 }

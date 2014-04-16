@@ -40,7 +40,13 @@ World::World()
 
 World::World(std::string file,  sf::RenderWindow *window)
 {
+	World::create(file, window);
+}
+void World::create(std::string file, sf::RenderWindow *window)
+{
 	m_initialized = false;
+
+	m_lvlPath = file;
 
 	std::ifstream ficLvl(file.c_str(), std::ios::in);
 	if(!ficLvl)
@@ -137,13 +143,42 @@ void World::eraseBloc(sf::Vector2f pos)
     m_blocs[pos.y/BLOC][pos.x/BLOC].setRect(rect);
 }
 
-void World::getJSONMap()
+std::string World::getJSONMap()
 {
     cJSON* root;
+	cJSON* pers;
     root = cJSON_CreateObject();
+	pers = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "name", cJSON_CreateString(m_lvlName.c_str()));
+
     cJSON_AddItemToObject(root, "background", cJSON_CreateString(m_cheminBackground.c_str()));
     cJSON_AddItemToObject(root, "block_text", cJSON_CreateString(m_cheminTexBlocs.c_str()));
+
+	cJSON_AddItemToObject(pers, "init_left", cJSON_CreateNumber(m_posInitPers.x));
+	cJSON_AddItemToObject(pers, "init_top", cJSON_CreateNumber(m_posInitPers.y));
+	cJSON_AddItemToObject(root, "character", pers);
+
+	
+	cJSON* map;
+	map = cJSON_CreateArray();
+	for(unsigned int i=0; i<m_blocs.size(); i++)
+	{
+		cJSON* foo;
+		cJSON_AddItemToArray(map, foo=cJSON_CreateArray());
+		for(unsigned int j=0; j<m_blocs[i].size(); j++)
+		{
+			cJSON_AddItemToArray(foo, cJSON_CreateNumber(m_blocs[i][j].getRect().left / BLOC));
+		}
+	}
+	cJSON_AddItemToObject(root, "blocks", map);
+	
     /* TODO: finish the register */
+	char* out_str;
+	out_str = cJSON_Print(root);
+	std::string returned = out_str;
+	free(out_str);
+	return returned;
 }
 void World::updateBloc()
 {
@@ -246,4 +281,13 @@ void World::setBlocType(sf::Vector2f pos, int type)
 		rect.left = type * BLOC;
 		m_blocs[pos.y/BLOC][pos.x/BLOC].setRect(rect);
 	}
+}
+std::string World::getFileName()
+{
+	return m_lvlPath;
+}
+void World::setCharPos(sf::Vector2f pos)
+{
+	m_posInitPers.x = (int)(pos.x / BLOC);
+	m_posInitPers.y = (int)(pos.y / BLOC);
 }
