@@ -27,7 +27,7 @@
 #include <dirent.h>
 
 #ifndef WIN32
-	#include <sys/types.h>
+    #include <sys/types.h>
 #endif
 
 #include <SFML/Graphics.hpp>
@@ -36,7 +36,6 @@
 #include "cJSON.h"
 
 #include "menu.h"
-#include "personnage.h"
 
 class Bloc
 {
@@ -51,42 +50,46 @@ private:
     sf::Sprite m_sprite;
 };
 
-class Personnage;
 class World
 {
 public:
-	World(std::string file, sf::RenderWindow *window);
-	World();
-	void create(std::string file, sf::RenderWindow *window);
-	int typeBloc(sf::Vector2f pos);
-    void draw();
-	void scroll(int direction);
-	void upgradeBloc(sf::Vector2f pos);
-	void eraseBloc(sf::Vector2f pos);
-	void setBlocType(sf::Vector2f pos, int type); 
-	std::string getJSONMap();
-    sf::Vector2f getCharacterPos();
-    void updateBloc();
-	bool initialized();
-	void parseJSON(std::string json);
-	std::string getFileName();
-	void setCharPos(sf::Vector2f pos);
+    World(std::string file, sf::RenderWindow *window);
+    World();
+    void create(std::string file, sf::RenderWindow *window);
+    bool initialized();
 
-	static std::string getAFileName(sf::RenderWindow &window);
+    sf::Vector2f getCharacterPos();
+    void setCharPos(sf::Vector2f pos);
+
+    void draw();
+    void scroll(int direction);
+
+    int typeBloc(sf::Vector2f pos);
+    void upgradeBloc(sf::Vector2f pos);
+    void eraseBloc(sf::Vector2f pos);
+    void setBlocType(sf::Vector2f pos, int type); 
+    bool isInMap(sf::Vector2f pos);
+    void updateBloc();
+
+    std::string getJSONMap();
+    void parseJSON(std::string json);
+    std::string getFileName();
+
+    static std::string getAFileName(sf::RenderWindow &window);
 
 private:
-	bool m_initialized;
- 	int m_debutAffichage;
-	std::vector <std::vector <Bloc> > m_blocs;
-	sf::Texture m_texBackground;
-	sf::Sprite m_background;
-	sf::Texture  m_texBlocs;
-	sf::Vector2f m_posInitPers;
-	std::string m_lvlName;
-	std::string m_cheminBackground;
-	std::string m_cheminTexBlocs;
-	sf::RenderWindow *m_window;
-	std::string m_lvlPath;
+    bool m_initialized;
+    int m_debutAffichage;
+    std::vector <std::vector <Bloc> > m_blocs;
+    sf::Texture m_texBackground;
+    sf::Sprite m_background;
+    sf::Texture  m_texBlocs;
+    sf::Vector2f m_posInitPers;
+    std::string m_lvlName;
+    std::string m_cheminBackground;
+    std::string m_cheminTexBlocs;
+    sf::RenderWindow *m_window;
+    std::string m_lvlPath;
 };
 
 #endif

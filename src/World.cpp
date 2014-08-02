@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "personnage.h"
 #include "defines.h"
 
 #include <SFML/Graphics.hpp>
@@ -35,38 +34,38 @@ sf::Sprite &Bloc::getSprite()
 }
 World::World()
 {
-	m_initialized = false;
+    m_initialized = false;
 }
 
 World::World(std::string file,  sf::RenderWindow *window)
 {
-	World::create(file, window);
+    World::create(file, window);
 }
 void World::create(std::string file, sf::RenderWindow *window)
 {
-	m_initialized = false;
+    m_initialized = false;
 
-	m_lvlPath = file;
+    m_lvlPath = file;
 
-	std::ifstream ficLvl(file.c_str(), std::ios::in);
-	if(!ficLvl)
-	{
-		std::cout << "Impossible de charger le fichier niveau" << std::endl;
-		return;
-	}
-	std::string lvl;
-	while(!ficLvl.eof())
-	{
-		char c;
-		ficLvl.get(c);
-		lvl+=c;
-	}
+    std::ifstream ficLvl(file.c_str(), std::ios::in);
+    if(!ficLvl)
+    {
+        std::cout << "Impossible de charger le fichier niveau" << std::endl;
+        return;
+    }
+    std::string lvl;
+    while(!ficLvl.eof())
+    {
+        char c;
+        ficLvl.get(c);
+        lvl+=c;
+    }
 
-	World::parseJSON(lvl);
+    World::parseJSON(lvl);
 
     sf::Image imageBack;
     sf::Image imageBloc;
-	if(!imageBack.loadFromFile(m_cheminBackground))
+    if(!imageBack.loadFromFile(m_cheminBackground))
     {
         std::cerr << "Image non chargée. (" << m_cheminBackground << ")"<<std::endl;
         return;
@@ -80,22 +79,22 @@ void World::create(std::string file, sf::RenderWindow *window)
     m_texBackground.loadFromImage(imageBack);
     m_texBlocs.loadFromImage(imageBloc);
 
-	m_background.setPosition(sf::Vector2f(0,0));
-	m_background.setTexture(m_texBackground);
+    m_background.setPosition(sf::Vector2f(0,0));
+    m_background.setTexture(m_texBackground);
 
     World::updateBloc();
 
-	m_debutAffichage = 0;
+    m_debutAffichage = 0;
 
-	m_window = window;
+    m_window = window;
 
-	m_initialized = true;
+    m_initialized = true;
 }
 void World::draw()
 {
-	m_window->draw(m_background);
-	for(unsigned int i=0; i<m_blocs.size(); i++)
-	{
+    m_window->draw(m_background);
+    for(unsigned int i=0; i<m_blocs.size(); i++)
+    {
 		for(unsigned int j=0; j<m_blocs[i].size(); j++)
 		{
 			m_window->draw(m_blocs[i][j].getSprite());
@@ -120,9 +119,16 @@ void World::scroll(int direction)
 
 	m_background.move(mv);
 }
+bool World::isInMap(sf::Vector2f pos)
+{
+    return pos.x/BLOC >= 0 && pos.x/BLOC < m_blocs[pos.y/BLOC].size() && pos.y/BLOC >= 0 && pos.y/BLOC < m_blocs.size();
+}
 int World::typeBloc(sf::Vector2f pos)
 {
-	return (m_blocs[pos.y/BLOC][(pos.x-m_debutAffichage)/BLOC].getRect().left) / BLOC;
+    if(World::isInMap(pos))
+	    return (m_blocs[pos.y/BLOC][(pos.x-m_debutAffichage)/BLOC].getRect().left) / BLOC;
+    else
+        return 0;
 }
 
 void World::upgradeBloc(sf::Vector2f pos)
@@ -284,10 +290,10 @@ void World::setBlocType(sf::Vector2f pos, int type)
 }
 std::string World::getFileName()
 {
-	return m_lvlPath;
+    return m_lvlPath;
 }
 void World::setCharPos(sf::Vector2f pos)
 {
-	m_posInitPers.x = (int)(pos.x / BLOC);
-	m_posInitPers.y = (int)(pos.y / BLOC);
+    m_posInitPers.x = (int)(pos.x / BLOC);
+    m_posInitPers.y = (int)(pos.y / BLOC);
 }
