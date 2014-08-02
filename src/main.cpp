@@ -55,6 +55,7 @@ int main()
 		choix = menu.chooseAnActionNumber(window);
 		if(choix >= 0)
 			menu.doFromActionNumber(choix, window, world);
+        world = World();
 	}
 
 	window.~RenderWindow();
