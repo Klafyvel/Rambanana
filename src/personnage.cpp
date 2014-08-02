@@ -110,13 +110,6 @@ void Personnage::move(int direction)
     {
         m_state.jump=true;
     }
-    if((direction & HAUT)&&(m_energieSaut > 0))
-    {
-        m_hitbox.top -= PAS_DEPLACEMENT_Y;
-        m_energieSaut --;
-    }
-    if(direction & BAS)
-            m_hitbox.top += PAS_DEPLACEMENT_Y;
 
     if(m_state.run || m_state.jump)
     {
